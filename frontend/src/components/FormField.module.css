@@ -1,0 +1,76 @@
+.form_input,
+.form_textarea,
+.form_select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e9ecef;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box;
+}
+
+.form_input:focus,
+.form_textarea:focus,
+.form_select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.form_textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.radio_group,
+.checkbox_group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.radio_option,
+.checkbox_option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+}
+
+.radio_option input[type="radio"],
+.checkbox_option input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+}
+
+.radio_option label,
+.checkbox_option label {
+  margin: 0;
+  font-weight: normal;
+  cursor: pointer;
+  flex: 1;
+}
+
+.form_label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #333;
+  font-size: 1rem;
+}
+
+.required_asterisk {
+  color: #dc3545;
+  margin-left: 4px;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .form_input,
+  .form_textarea,
+  .form_select {
+    padding: 10px 12px;
+  }
+}

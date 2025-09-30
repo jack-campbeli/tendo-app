@@ -1,0 +1,41 @@
+/* Field creation grid */
+.field_grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr 1fr;
+  margin-bottom: 1rem;
+}
+
+/* Checkbox styling */
+.checkbox_container {
+  margin-bottom: 1rem;
+}
+
+.checkbox_label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.checkbox_input {
+  margin-right: 0.5rem;
+  transform: scale(1.2);
+}
+
+.checkbox_text {
+  font-weight: 500;
+  color: #495057;
+}
+
+/* Options Input */
+.options_container {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .field_grid {
+    grid-template-columns: 1fr;
+  }
+}

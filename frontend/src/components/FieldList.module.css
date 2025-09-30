@@ -1,0 +1,68 @@
+/* Field list */
+.field_item {
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.field_info {
+  flex: 1;
+}
+
+.field_label {
+  color: #2c3e50;
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.field_type {
+  color: #6c757d;
+  margin-left: 0.5rem;
+}
+
+.field_required {
+  color: #dc3545;
+  margin-left: 0.5rem;
+  font-weight: bold;
+}
+
+.field_options {
+  margin-top: 0.5rem;
+}
+
+.field_controls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn_move {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.btn_move:disabled {
+  background: #e9ecef;
+  color: #6c757d;
+  cursor: not-allowed;
+}
+
+.btn_remove {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
