@@ -33,16 +33,8 @@ function UserFormPage() {
         const formData = await response.json();
         setForm(formData);
         
-        // initialize form data with empty values
-        const initialData = {};
-        formData.fields.forEach((field, index) => {
-          const fieldKey = `${field.id}_${index}`;
-          if (field.type === 'checkbox') {
-            initialData[fieldKey] = [];
-          } else {
-            initialData[fieldKey] = '';
-          }
-        });
+        // initialize form data with empty values using our helper function
+        const initialData = initializeFormData(formData.fields);
         setFormData(initialData);
         
       } catch (err) {
@@ -54,6 +46,24 @@ function UserFormPage() {
 
     fetchLatestForm();
   }, []); // Empty dependency array [] = runs only once on mount
+
+  // replaces the form data with the new value while keeping the existing data
+  /**
+   * Helper function to initialize form data with empty values
+   * This follows the DRY principle - we use it in multiple places!
+   */
+  const initializeFormData = (fields) => {
+    const initialData = {};
+    fields.forEach((field, index) => {
+      const fieldKey = `${field.id}_${index}`;
+      if (field.type === 'checkbox') {
+        initialData[fieldKey] = []; // Checkboxes need arrays for multiple selections
+      } else {
+        initialData[fieldKey] = ''; // All other fields start empty
+      }
+    });
+    return initialData;
+  };
 
   const handleInputChange = (fieldId, value) => {
     setFormData(prev => ({
@@ -75,7 +85,7 @@ function UserFormPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(submissionPayload),
+        body: JSON.stringify(submissionPayload), // JS obj -> JSON str
       });
 
       if (!response.ok) {
@@ -86,25 +96,14 @@ function UserFormPage() {
       setSubmitted(true);
     } catch (err) {
       setError(err.message);
-      // Optional: scroll to the top to show the error message if you add one
     }
   };
 
   const resetFormInputs = () => {
     if (!form?.fields) return; // Optional chaining: safe if form is null
-    const initialData = {};
-    form.fields.forEach((field, index) => {
-      const fieldKey = `${field.id}_${index}`;
-      if (field.type === 'checkbox') {
-        initialData[fieldKey] = []; // Checkboxes need arrays for multiple selections
-      } else {
-        initialData[fieldKey] = '';
-      }
-    });
+    const initialData = initializeFormData(form.fields);
     setFormData(initialData);
   };
-
-  // The renderField function has been moved to the FormField component.
 
   // Early returns: React pattern to show different UI based on state
   if (loading) {
