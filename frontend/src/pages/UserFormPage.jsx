@@ -153,9 +153,16 @@ function UserFormPage() {
       <>
         <Header title="Patient Form" />
         <div className="user-form-container">
-          <div className="user-form-content">
-            <h1 className="user-form-title">Form Submitted</h1>
-            <p className="submission-confirmation">Thank you for your response. Your submission has been recorded.</p>
+          <div className="submission-success">
+            <div className="submission-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h1 className="submission-title">Form Submitted Successfully</h1>
+            <p className="submission-message">
+              Thank you for your response. Your submission has been recorded.
+            </p>
             <button
               type="button"
               className="submit-button"

@@ -3,6 +3,7 @@ import './AdminPage.css';
 import FieldEditor from '../components/forms/FieldEditor';
 import FieldList from '../components/forms/FieldList';
 import Header from '../components/common/Header';
+import SuccessMessage from '../components/common/SuccessMessage';
 
 function AdminPage() {
 
@@ -199,31 +200,21 @@ function AdminPage() {
       {/* The main container for the entire page. */}
       <div className="admin-container">
         <h1 className="admin-title">
-          Admin Form Builder
+          Form Builder
         </h1>
+        <p className="admin-subtitle">
+          Create beautiful, dynamic forms in minutes
+        </p>
       
       {/* TERNARY OPERATOR FOR CONDITIONAL RENDERING:
           - If `savedFormId` has a value (is "truthy"), it renders the success message.
           - Otherwise (`:`), it renders the form builder interface. */}
       {savedFormId ? (
         // SUCCESS STATE: This block is shown only after a form is successfully saved.
-        <div className="success-card">
-          <h3 className="success-title">✅ Form Created Successfully!</h3>
-          <p className="success-text">
-            <strong>Form ID:</strong> {/* `<code>` is used for displaying code snippets. */}
-            <code className="code-block">{savedFormId}</code>
-          </p>
-          <p className="success-text">
-            <strong>Form URL:</strong>
-            <code className="code-block">http://localhost:5173/form/{savedFormId}</code>
-          </p>
-          <button 
-            onClick={handleStartNewForm}
-            className="btn btn-primary"
-          >
-            Create Another Form
-          </button>
-        </div>
+        <SuccessMessage 
+          formId={savedFormId}
+          onCreateAnother={handleStartNewForm}
+        />
       ) : (
         // FORM BUILDER STATE: If no form has been saved yet, show the main interface.
         // `<>` is a React Fragment. It lets us group elements without adding an extra `<div>` to the HTML.

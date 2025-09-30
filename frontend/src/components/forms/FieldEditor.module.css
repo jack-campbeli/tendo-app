@@ -8,34 +8,59 @@
 
 /* Checkbox styling */
 .checkbox_container {
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
+  padding: 0.875rem;
+  background: #f7fafc;
+  border-radius: 6px;
+  border: 1px solid #cbd5e0;
+  transition: all 0.2s ease;
+}
+
+.checkbox_container:hover {
+  border-color: #a0aec0;
+  background: #edf2f7;
 }
 
 .checkbox_label {
   display: flex;
   align-items: center;
   cursor: pointer;
+  user-select: none;
 }
 
 .checkbox_input {
-  margin-right: 0.5rem;
-  transform: scale(1.2);
+  margin-right: 0.625rem;
+  transform: scale(1.3);
+  cursor: pointer;
+  accent-color: #0066cc;
 }
 
 .checkbox_text {
-  font-weight: 500;
-  color: #495057;
+  font-weight: 600;
+  color: #2d3748;
+  font-size: 0.9rem;
 }
 
 /* Options Input */
 .options_container {
   margin-top: 1rem;
   margin-bottom: 1rem;
+  padding: 0.875rem;
+  background: #ebf8ff;
+  border-radius: 6px;
+  border: 1px dashed #90cdf4;
+  transition: all 0.2s ease;
+}
+
+.options_container:hover {
+  border-color: #4299e1;
+  background: #bee3f8;
 }
 
 /* Responsive design */
 @media (max-width: 768px) {
   .field_grid {
     grid-template-columns: 1fr;
+    gap: 1rem;
   }
 }

@@ -14,7 +14,7 @@ function FieldList({
 
   return (
     <div className="form-section">
-      <h3 className="section-title">3. Form Fields ({fields.length})</h3>
+      <h3 className="section-title">3. Current Form Fields ({fields.length} {fields.length === 1 ? 'field' : 'fields'})</h3>
 
       {/* ARRAY MAPPING: This loops over the `fields` array. For each `field` object in the
           array, it creates a `<div>` element to display its information and controls. */}
@@ -25,14 +25,12 @@ function FieldList({
         <div key={field.id} className={styles.field_item}>
           <div className={styles.field_info}>
             <strong className={styles.field_label}>{field.label}</strong>
+            {/* Display the user-friendly label for the field type */}
             <span className={styles.field_type}>
-              ({/* This logic finds the user-friendly label (e.g., "Text") for a given
-                  type value (e.g., "text"). If it can't find one, it safely falls
-                  back to showing the raw type value itself. */})
               {fieldTypes.find(t => t.value === field.type)?.label || field.type}
             </span>
             {/* SHORT-CIRCUIT RENDERING: The "Required" span is only rendered if `field.required` is true. */}
-            {field.required && <span className={styles.field_required}>*Required</span>}
+            {field.required && <span className={styles.field_required}>Required</span>}
             {/* Displaying field options if they exist */}
             {field.options && field.options.length > 0 && (
               <div className={styles.field_options}>

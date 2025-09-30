@@ -1,0 +1,135 @@
+/* Success Message Component Styles */
+
+.success_card {
+  background: white;
+  border: 1px solid #cbd5e0;
+  border-radius: 8px;
+  padding: 2.5rem 2rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  animation: slideIn 0.4s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Success Icon */
+.icon_container {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 1.5rem;
+  background: #0066cc;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.check_icon {
+  width: 36px;
+  height: 36px;
+  color: white;
+  stroke-width: 3;
+}
+
+/* Text Styles */
+.success_title {
+  color: #1a365d;
+  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.success_subtitle {
+  color: #4a5568;
+  margin-bottom: 2rem;
+  font-size: 1rem;
+}
+
+/* Info Section */
+.info_section {
+  background: #f7fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.info_item {
+  margin-bottom: 1.25rem;
+}
+
+.info_item:last-child {
+  margin-bottom: 0;
+}
+
+.info_label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #718096;
+  margin-bottom: 0.5rem;
+}
+
+.code_block {
+  display: block;
+  background: white;
+  padding: 0.625rem 0.875rem;
+  border-radius: 4px;
+  font-family: "SF Mono", Monaco, "Courier New", monospace;
+  font-size: 0.875rem;
+  border: 1px solid #cbd5e0;
+  color: #2d3748;
+  word-break: break-all;
+}
+
+/* Button */
+.btn_primary {
+  background: #0066cc;
+  color: white;
+  padding: 0.75rem 1.75rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 102, 204, 0.2);
+}
+
+.btn_primary:hover {
+  background: #0052a3;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 102, 204, 0.3);
+}
+
+.btn_primary:active {
+  transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .success_card {
+    padding: 2rem 1.5rem;
+  }
+
+  .success_title {
+    font-size: 1.25rem;
+  }
+
+  .info_section {
+    padding: 1.25rem;
+  }
+}
