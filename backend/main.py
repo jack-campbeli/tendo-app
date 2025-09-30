@@ -11,7 +11,12 @@ from sqlmodel import (
 )
 
 import uuid, json
-from models import Form, FormSubmission  # Our custom Form model
+from models import (
+    Form,
+    FormSubmission,
+    LoginRequest,
+    LoginResponse,
+)  # Our custom models
 
 # Database setup - creates connection to SQLite database file
 engine = create_engine("sqlite:///database.db")  # SQLite stores data in a local file
@@ -114,6 +119,41 @@ async def get_form(form_id: str, session: Session = Depends(get_session)):
 
     # json.loads converts JSON string back to Python dict for the API response
     return {"form_name": db_form.form_name, "fields": json.loads(db_form.fields)}
+
+
+# Dummy users for authentication (no sign-up functionality)
+DUMMY_USERS = {
+    "jack@gmail.com": {"password": "1111", "user_type": "patient"},
+    "maggie@gmail.com": {"password": "1234", "user_type": "admin"},
+}
+
+
+# login endpoint
+@app.post("/api/auth/login", response_model=LoginResponse)
+async def login(credentials: LoginRequest):
+    """
+    Authenticate user with email and password.
+    Returns user type (patient or admin) on successful login.
+    """
+    email = credentials.email.lower().strip()
+    password = credentials.password
+
+    # Check if user exists in our dummy users
+    if email not in DUMMY_USERS:
+        raise HTTPException(status_code=401, detail="Invalid email or password")
+
+    # Verify password
+    if DUMMY_USERS[email]["password"] != password:
+        raise HTTPException(status_code=401, detail="Invalid email or password")
+
+    # Successful login
+    user_type = DUMMY_USERS[email]["user_type"]
+    return LoginResponse(
+        success=True,
+        user_type=user_type,
+        email=email,
+        message=f"Welcome back! Logged in as {user_type}.",
+    )
 
 
 # test endpoint

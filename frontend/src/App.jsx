@@ -4,19 +4,45 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import AdminPage from './pages/AdminPage'
 import UserFormPage from './pages/UserFormPage'
+import LoginPage from './pages/LoginPage'
+import ProtectedRoute from './components/common/ProtectedRoute'
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Admin routes */}
-        <Route path="/admin" element={<AdminPage />} />
+        {/* Login route - accessible to everyone */}
+        <Route path="/login" element={<LoginPage />} />
 
-        {/* User routes */}
-        <Route path="/form/:formId" element={<UserFormPage />} />
+        {/* Admin routes - only admins can access */}
+        <Route 
+          path="/admin" 
+          element={
+            <ProtectedRoute allowedUserType="admin">
+              <AdminPage />
+            </ProtectedRoute>
+          } 
+        />
+
+        {/* Patient routes - only patients can access */}
+        <Route 
+          path="/forms/:formId" 
+          element={
+            <ProtectedRoute allowedUserType="patient">
+              <UserFormPage />
+            </ProtectedRoute>
+          } 
+        />
         
-        {/* Default route - displays latest form */}
-        <Route path="/" element={<UserFormPage />} />
+        {/* Default route - displays latest form (patients only) */}
+        <Route 
+          path="/forms/latest" 
+          element={
+            <ProtectedRoute allowedUserType="patient">
+              <UserFormPage />
+            </ProtectedRoute>
+          } 
+        />
 
       </Routes>
     </BrowserRouter>

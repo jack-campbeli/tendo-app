@@ -1,0 +1,22 @@
+/* Full-page container for the login page */
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f8f9fa;
+  padding: 20px;
+}
+
+/* Container that holds the login form */
+.login-container {
+  width: 100%;
+  max-width: 500px;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+  .login-page {
+    padding: 10px;
+  }
+}

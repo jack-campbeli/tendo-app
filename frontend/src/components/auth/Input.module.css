@@ -1,0 +1,38 @@
+/* Container for the entire input (label + field) */
+.input_container {
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+/* Styling for the label text */
+.input_label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #495057;
+  font-size: 1rem;
+}
+
+/* Red asterisk for required fields */
+.required {
+  color: #dc3545;
+  margin-left: 4px;
+}
+
+/* Styling for the input field itself */
+.input_field {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  transition: border-color 0.2s ease;
+  box-sizing: border-box;
+}
+
+/* When user clicks/focuses on the input */
+.input_field:focus {
+  outline: 2px solid #0969da;
+  outline-offset: 2px;
+  border-color: #0969da;
+}

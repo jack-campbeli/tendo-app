@@ -1,20 +1,14 @@
 import React, { useState } from 'react';
 import './AdminPage.css';
-import FieldEditor from '../components/FieldEditor';
-import FieldList from '../components/FieldList';
+import FieldEditor from '../components/forms/FieldEditor';
+import FieldList from '../components/forms/FieldList';
+import Header from '../components/common/Header';
 
 function AdminPage() {
-  // ========== STATE MANAGEMENT ==========
-  // This is where we store all the data that can change in our component
-  
-  // The name of the form being created (e.g. "Patient Intake Form")
+
   const [formName, setFormName] = useState('');
-  
-  // Array that holds all the fields that have been added to the form
-  // Each field is an object like: { id: 123, label: "Name", type: "text", required: true }
   const [fields, setFields] = useState([]);
   
-  // Temporary storage for the field currently being created (before clicking "Add")
   const [currentField, setCurrentField] = useState({
     label: '',      // What the user will see (e.g. "Date of Birth")
     type: 'text',   // What kind of input (text, email, date, etc.)
@@ -22,15 +16,9 @@ function AdminPage() {
     options: '', // For comma-separated options for select, checkbox, radio
   });
   
-  // After successfully saving a form, this stores the ID returned by the API
   const [savedFormId, setSavedFormId] = useState(null);
-  
-  // Tracks whether we're currently sending data to the API
   const [isLoading, setIsLoading] = useState(false);
-  
-  // Stores any error messages to show the user
   const [error, setError] = useState(null);
-
   const typesWithOptions = ['select', 'checkbox', 'radio'];
 
   // ========== AVAILABLE FIELD TYPES ==========
@@ -206,11 +194,13 @@ function AdminPage() {
   // ========== RENDER THE USER INTERFACE ==========
   // The return statement contains all the JSX (HTML-like code) that defines what the component looks like.
   return (
-    // The main container for the entire page.
-    <div className="admin-container">
-      <h1 className="admin-title">
-        Admin Form Builder
-      </h1>
+    <>
+      <Header title="Admin Dashboard" />
+      {/* The main container for the entire page. */}
+      <div className="admin-container">
+        <h1 className="admin-title">
+          Admin Form Builder
+        </h1>
       
       {/* TERNARY OPERATOR FOR CONDITIONAL RENDERING:
           - If `savedFormId` has a value (is "truthy"), it renders the success message.
@@ -292,7 +282,8 @@ function AdminPage() {
           </div>
         </>
       )}
-    </div>
+      </div>
+    </>
   );
 }
 

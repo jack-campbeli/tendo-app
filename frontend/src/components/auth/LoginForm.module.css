@@ -1,0 +1,80 @@
+/* The main form container */
+.login_form {
+  width: 100%;
+  padding: 40px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Form title styling */
+.form_title {
+  margin: 0 0 0.5rem 0;
+  font-size: 2rem;
+  color: #333;
+  text-align: center;
+  font-weight: 600;
+}
+
+/* Subtitle under the title */
+.form_subtitle {
+  margin: 0 0 30px 0;
+  color: #6c757d;
+  text-align: center;
+  font-size: 1rem;
+}
+
+/* Error message box */
+.error_message {
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 6px;
+  color: #721c24;
+  font-size: 1rem;
+}
+
+/* Login button styling */
+.login_button {
+  width: 100%;
+  padding: 14px 28px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: white;
+  background-color: #007bff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  margin-top: 10px;
+}
+
+/* Button hover effect */
+.login_button:hover {
+  background-color: #0056b3;
+  transform: translateY(-1px);
+}
+
+/* Button active (being clicked) effect */
+.login_button:active {
+  transform: translateY(0);
+}
+
+/* Button when disabled (during loading) */
+.login_button:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .login_form {
+    padding: 20px;
+  }
+
+  .form_title {
+    font-size: 1.5rem;
+  }
+}

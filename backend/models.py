@@ -1,6 +1,7 @@
 from typing import Optional
 from sqlmodel import Field, SQLModel
 from datetime import datetime, UTC
+from pydantic import BaseModel
 
 
 class Form(SQLModel, table=True):
@@ -17,3 +18,19 @@ class FormSubmission(SQLModel, table=True):
     form_id: str
     submission_data: str  # Store submission data as a JSON string
     submitted_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+
+class LoginRequest(BaseModel):
+    """Request model for login endpoint."""
+
+    email: str
+    password: str
+
+
+class LoginResponse(BaseModel):
+    """Response model for successful login."""
+
+    success: bool
+    user_type: str  # "patient" or "admin"
+    email: str
+    message: str

@@ -1,0 +1,55 @@
+/* Main header container */
+.header {
+  background-color: white;
+  border-bottom: 1px solid #e9ecef;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+/* Inner content wrapper - provides max width and centers content */
+.header_content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+/* Logout button styling */
+.logout_button {
+  padding: 0.5rem 1.25rem;
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+/* Logout button hover effect */
+.logout_button:hover {
+  background-color: #dc3545;
+  transform: translateY(-1px);
+}
+
+/* Logout button active (being clicked) effect */
+.logout_button:active {
+  transform: translateY(0);
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+  .header_content {
+    padding: 1rem;
+  }
+
+  .logout_button {
+    padding: 0.4rem 1rem;
+    font-size: 0.875rem;
+  }
+}

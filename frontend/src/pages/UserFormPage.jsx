@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './UserFormPage.css';
-import FormField from '../components/FormField';
+import FormField from '../components/forms/FormField';
+import Header from '../components/common/Header';
 
 function UserFormPage() {
   const [form, setForm] = useState(null);
@@ -9,10 +10,13 @@ function UserFormPage() {
   const [formData, setFormData] = useState({});
   const [submitted, setSubmitted] = useState(false);
 
+  // fetch the latest form on page load
   useEffect(() => {
     const fetchLatestForm = async () => {
       try {
         setLoading(true);
+
+        // get the latest form (fetch() defaults to GET)
         const response = await fetch('http://localhost:8000/api/forms/latest');
         
         if (!response.ok) {
@@ -25,10 +29,11 @@ function UserFormPage() {
           throw new Error('Failed to fetch form');
         }
         
+        // convert JSON to JS object and set the form state
         const formData = await response.json();
         setForm(formData);
         
-        // Initialize form data with empty values
+        // initialize form data with empty values
         const initialData = {};
         formData.fields.forEach((field, index) => {
           const fieldKey = `${field.id}_${index}`;
@@ -104,62 +109,76 @@ function UserFormPage() {
   // Early returns: React pattern to show different UI based on state
   if (loading) {
     return (
-      <div className="user-form-container">
-        <div className="loading-container">
-          <h1>Loading Form...</h1>
+      <>
+        <Header title="Patient Form" />
+        <div className="user-form-container">
+          <div className="loading-container">
+            <h1>Loading Form...</h1>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
   if (error) {
     return (
-      <div className="user-form-container">
-        <div className="error-container">
-          <h1>Error Loading Form</h1>
-          <p>{error}</p>
+      <>
+        <Header title="Patient Form" />
+        <div className="user-form-container">
+          <div className="error-container">
+            <h1>Error Loading Form</h1>
+            <p>{error}</p>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
   if (!form) {
     return (
-      <div className="user-form-container">
-        <div className="no-form-container">
-          <h1>No Forms Available</h1>
-          <p>There are currently no forms available for you to fill out.</p>
-          <p>Please check back later or contact the administrator.</p>
+      <>
+        <Header title="Patient Form" />
+        <div className="user-form-container">
+          <div className="no-form-container">
+            <h1>No Forms Available</h1>
+            <p>There are currently no forms available for you to fill out.</p>
+            <p>Please check back later or contact the administrator.</p>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
   if (submitted) {
     return (
-      <div className="user-form-container">
-        <div className="user-form-content">
-          <h1 className="user-form-title">Form Submitted</h1>
-          <p className="submission-confirmation">Thank you for your response. Your submission has been recorded.</p>
-          <button
-            type="button"
-            className="submit-button"
-            onClick={() => {
-              resetFormInputs();
-              setSubmitted(false); // Reset state to show form again
-            }}
-          >
-            Fill Another Response
-          </button>
+      <>
+        <Header title="Patient Form" />
+        <div className="user-form-container">
+          <div className="user-form-content">
+            <h1 className="user-form-title">Form Submitted</h1>
+            <p className="submission-confirmation">Thank you for your response. Your submission has been recorded.</p>
+            <button
+              type="button"
+              className="submit-button"
+              onClick={() => {
+                resetFormInputs();
+                setSubmitted(false); // Reset state to show form again
+              }}
+            >
+              Fill Another Response
+            </button>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
   return (
-    <div className="user-form-container">
-      <div className="user-form-content">
-        <h1 className="user-form-title">{form.form_name}</h1>
+    <>
+      <Header title="Patient Form" />
+      <div className="user-form-container">
+        <div className="user-form-content">
+          <h1 className="user-form-title">{form.form_name}</h1>
         
         <form onSubmit={handleSubmit} className="user-form">
           {form.fields.map((field, index) => (
@@ -184,6 +203,7 @@ function UserFormPage() {
         </form>
       </div>
     </div>
+    </>
   );
 }
 
