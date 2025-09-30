@@ -9,13 +9,15 @@ import { Navigate } from 'react-router-dom';
  * 
  * Props:
  * - children: The component to render if the user is authorized
- * - allowedUserType: "patient" or "admin" - which user type can access this route
+ * - allowedUserType: (optional) "patient" or "admin" - which user type can access this route
+ *                    If not provided, redirects to user's appropriate home page
  * 
  * How it works:
  * 1. Checks if user is logged in (data exists in localStorage)
- * 2. Checks if user type matches the allowed type
- * 3. If authorized, shows the page (children)
- * 4. If not authorized, redirects to appropriate page
+ * 2. If no allowedUserType, redirects to user's home page
+ * 3. If allowedUserType specified, checks if user type matches
+ * 4. If authorized, shows the page (children)
+ * 5. If not authorized, redirects to appropriate page
  */
 function ProtectedRoute({ children, allowedUserType }) {
 
@@ -30,9 +32,8 @@ function ProtectedRoute({ children, allowedUserType }) {
   // user string -> JS object (via JSON.parse)
   const user = JSON.parse(userString);
 
-  // if the user type != the allowed type, redirect to the appropriate page
-  if (user.userType !== allowedUserType) {
-
+  // if no allowedUserType OR user type doesn't match, redirect to user's home page
+  if (!allowedUserType || user.userType !== allowedUserType) {
     // admin goes to admin page
     if (user.userType === 'admin') {
       return <Navigate to="/admin" replace />;
@@ -43,7 +44,7 @@ function ProtectedRoute({ children, allowedUserType }) {
     }
   }
 
-  // else show the protected page
+  // else show the protected page (user is authorized)
   return children;
 }
 

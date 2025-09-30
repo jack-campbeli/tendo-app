@@ -11,6 +11,17 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Default route - redirects to appropriate page based on user type */}
+        <Route 
+          path="/" 
+          element={
+            <ProtectedRoute>
+              {/* This will never render - ProtectedRoute redirects */}
+              <div />
+            </ProtectedRoute>
+          } 
+        />
+
         {/* Login route - accessible to everyone */}
         <Route path="/login" element={<LoginPage />} />
 
@@ -34,7 +45,7 @@ function App() {
           } 
         />
         
-        {/* Default route - displays latest form (patients only) */}
+        {/* Latest form route (patients only) */}
         <Route 
           path="/forms/latest" 
           element={
