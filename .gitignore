@@ -33,3 +33,4 @@ backend/api_key.txt
 
 # Node
 node_modules/
+backend/config/api_key.txt

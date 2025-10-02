@@ -1,24 +1,23 @@
 import json
 from pathlib import Path
 from openai import AsyncOpenAI
+from config.constants import SUPPORTED_LANGUAGES
 
 
 class TranslationService:
     """Handles form field translation using OpenAI API."""
 
-    _LANGUAGE_NAMES = {"en": "English", "es": "Spanish"}
-
     def __init__(self):
         api_key = self._load_api_key()
         if not api_key:
             raise ValueError(
-                "OpenAI API key not found. Create backend/api_key.txt with your key."
+                "OpenAI API key not found. Create backend/config/api_key.txt with your key."
             )
         self._client = AsyncOpenAI(api_key=api_key)
 
     def _load_api_key(self) -> str:
         """Load API key from local file."""
-        key_file = Path(__file__).parent / "api_key.txt"
+        key_file = Path(__file__).parent.parent / "config" / "api_key.txt"
         if key_file.exists():
             return key_file.read_text().strip()
         return ""
@@ -38,7 +37,7 @@ class TranslationService:
             return form_name
 
         # get target language
-        target_lang_name = self._LANGUAGE_NAMES.get(target_language, target_language)
+        target_lang_name = SUPPORTED_LANGUAGES.get(target_language, target_language)
 
         # prompt
         prompt = f"""Translate the following form name to {target_lang_name}. 
@@ -80,7 +79,7 @@ class TranslationService:
             return response_data
 
         # get source language
-        source_lang_name = self._LANGUAGE_NAMES.get(source_language, source_language)
+        source_lang_name = SUPPORTED_LANGUAGES.get(source_language, source_language)
 
         # Extract non-empty text values to translate
         translatable_items = {}
@@ -145,7 +144,7 @@ class TranslationService:
         if target_language == "en":
             return fields
             # default value
-        target_lang_name = self._LANGUAGE_NAMES.get(target_language, target_language)
+        target_lang_name = SUPPORTED_LANGUAGES.get(target_language, target_language)
 
         translatable_content = self._extract_translatable_content(fields)
         translated_content = await self._translate_batch(

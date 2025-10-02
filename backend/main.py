@@ -19,7 +19,8 @@ from models import (
     LoginResponse,
     TranslatedForm,
 )  # Our custom models
-from translation_service import TranslationService
+from services.translation_service import TranslationService
+from config.constants import PRE_CACHE_LANGUAGES
 
 # Database setup - creates connection to SQLite database file
 engine = create_engine("sqlite:///database.db")  # SQLite stores data in a local file
@@ -110,24 +111,27 @@ async def create_form(form: dict, session: Session = Depends(get_session)):
     session.add(db_form)
     session.commit()
 
-    # Pre-cache Spanish translation
-    try:
-        translator = TranslationService()
-        translated_form_name = await translator.translate_form_name(
-            form["form_name"], "es"
-        )
-        translated_fields = await translator.translate_form_fields(form["fields"], "es")
+    # Pre-cache translations for configured languages
+    translator = TranslationService()
+    for lang_code in PRE_CACHE_LANGUAGES:
+        try:
+            translated_form_name = await translator.translate_form_name(
+                form["form_name"], lang_code
+            )
+            translated_fields = await translator.translate_form_fields(
+                form["fields"], lang_code
+            )
 
-        translated_form = TranslatedForm(
-            form_id=form_id,
-            language_code="es",
-            translated_form_name=translated_form_name,
-            translated_fields=json.dumps(translated_fields),
-        )
-        session.add(translated_form)
-        session.commit()
-    except Exception as e:
-        print(f"Warning: Failed to pre-cache Spanish translation: {e}")
+            translated_form = TranslatedForm(
+                form_id=form_id,
+                language_code=lang_code,
+                translated_form_name=translated_form_name,
+                translated_fields=json.dumps(translated_fields),
+            )
+            session.add(translated_form)
+            session.commit()
+        except Exception as e:
+            print(f"Warning: Failed to pre-cache {lang_code} translation: {e}")
 
     return {"form_id": form_id}
 
