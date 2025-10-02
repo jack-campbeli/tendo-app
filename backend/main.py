@@ -197,9 +197,23 @@ async def get_latest_form(lang: str = "en", session: Session = Depends(get_sessi
 # save a form submission
 @app.post("/api/submissions")
 async def save_submission(submission: dict, session: Session = Depends(get_session)):
+    submission_data = submission["submission_data"]
+    language = submission.get("language", "en")
+
+    # Translate responses to English if submitted in another language
+    if language != "en":
+        try:
+            translator = TranslationService()
+            submission_data = translator.translate_responses_to_english(
+                submission_data, language
+            )
+        except Exception as e:
+            # If translation fails, log and store original data
+            print(f"Warning: Failed to translate submission responses: {e}")
+
     db_submission = FormSubmission(
         form_id=submission["form_id"],
-        submission_data=json.dumps(submission["submission_data"]),
+        submission_data=json.dumps(submission_data),
     )
     session.add(db_submission)
     session.commit()

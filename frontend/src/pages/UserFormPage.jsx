@@ -8,6 +8,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 const UI_TRANSLATIONS = {
   en: {
     submitButton: 'Submit Form',
+    submittingButton: '⏳ Submitting...',
     fillAnother: 'Fill Another Response',
     successTitle: 'Form Submitted Successfully',
     successMessage: 'Thank you for your response. Your submission has been recorded.',
@@ -19,6 +20,7 @@ const UI_TRANSLATIONS = {
   },
   es: {
     submitButton: 'Enviar Formulario',
+    submittingButton: '⏳ Enviando...',
     fillAnother: 'Completar Otra Respuesta',
     successTitle: 'Formulario Enviado Exitosamente',
     successMessage: 'Gracias por su respuesta. Su envío ha sido registrado.',
@@ -38,6 +40,7 @@ function UserFormPage() {
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState({});
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // fetch the latest form on page load or when language changes
   useEffect(() => {
@@ -99,10 +102,15 @@ function UserFormPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isSubmitting) return; // Prevent multiple submissions
+
+    setIsSubmitting(true);
+    setError(null);
     try {
       const submissionPayload = {
         form_id: form.id,
         submission_data: formData,
+        language: language, // Include language so backend knows if translation is needed
       };
 
       const response = await fetch('http://localhost:8000/api/submissions', {
@@ -121,6 +129,8 @@ function UserFormPage() {
       setSubmitted(true);
     } catch (err) {
       setError(err.message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -234,8 +244,9 @@ function UserFormPage() {
           <button 
             type="submit" 
             className="submit-button"
+            disabled={isSubmitting}
           >
-            {t.submitButton}
+            {isSubmitting ? t.submittingButton : t.submitButton}
           </button>
         </form>
       </div>

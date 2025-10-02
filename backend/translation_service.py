@@ -59,6 +59,71 @@ class TranslationService:
 
         return response.choices[0].message.content.strip()
 
+    def translate_responses_to_english(
+        self, response_data: dict, source_language: str
+    ) -> dict:
+        """
+        Translate form response data back to English for storage.
+
+        Args:
+            response_data: Dictionary of field responses (field_key: value pairs)
+            source_language: Language code the responses are in (e.g., 'es')
+
+        Returns:
+            Dictionary with translated values
+        """
+        if source_language == "en":
+            return response_data
+
+        source_lang_name = self._LANGUAGE_NAMES.get(source_language, source_language)
+
+        # Extract non-empty text values to translate
+        translatable_items = {}
+        for key, value in response_data.items():
+            if isinstance(value, str) and value.strip():
+                translatable_items[key] = value
+            elif isinstance(value, list) and value:
+                # Handle checkbox arrays
+                translatable_items[key] = value
+
+        if not translatable_items:
+            return response_data
+
+        # Translate in batch
+        prompt = f"""Translate the following patient form responses from {source_lang_name} to English.
+                    Maintain the JSON structure exactly. Only translate the text values, not the keys.
+                    Keep medical terminology accurate and professional.
+
+                    {json.dumps(translatable_items, ensure_ascii=False)}"""
+
+        response = self._client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are a professional medical translator. Translate accurately while maintaining medical terminology precision.",
+                },
+                {"role": "user", "content": prompt},
+            ],
+            temperature=0.3,
+        )
+
+        translated_text = response.choices[0].message.content.strip()
+
+        # Remove markdown code blocks if present
+        if translated_text.startswith("```"):
+            lines = translated_text.split("\n")
+            translated_text = "\n".join(lines[1:-1])
+
+        translated_items = json.loads(translated_text)
+
+        # Merge translated values back into original response data
+        translated_response = response_data.copy()
+        for key, value in translated_items.items():
+            translated_response[key] = value
+
+        return translated_response
+
     def translate_form_fields(
         self, fields: list[dict], target_language: str
     ) -> list[dict]:
