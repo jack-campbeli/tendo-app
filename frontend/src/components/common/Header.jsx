@@ -1,32 +1,41 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '../../contexts/LanguageContext';
 import styles from './Header.module.css';
 
 /**
  * Header Component
  * 
  * A reusable header component that displays at the top of pages.
- * Shows the page title and a logout button.
+ * Shows the page title, optional language selector, and a logout button.
  * 
  * Props:
  * - title: The text to display in the header (e.g., "Admin Dashboard")
+ * - showLanguageSelector: Boolean to control whether language selector is shown (default: true)
  */
-function Header({ title }) {
-  // useNavigate Hook: A function from React Router that lets us programmatically change pages.
+function Header({ title, showLanguageSelector = true }) {
   const navigate = useNavigate();
-
+  const { language, setLanguage } = useLanguage();
 
   const handleLogout = () => {
-    // remove user from localStorage
     localStorage.removeItem('user');
-    // redirect to login page
     navigate('/login');
   };
 
   return (
     <header className={styles.header}>
-      {/* inner div is used to control width and alignment of header's content */}
       <div className={styles.header_content}>
+        {showLanguageSelector && (
+          <select 
+            value={language}
+            onChange={(e) => setLanguage(e.target.value)}
+            className={styles.language_selector}
+          >
+            <option value="en">English</option>
+            <option value="es">Español</option>
+          </select>
+        )}
+        
         <button 
           onClick={handleLogout}
           className={styles.logout_button}

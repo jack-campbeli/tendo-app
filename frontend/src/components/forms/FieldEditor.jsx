@@ -28,7 +28,6 @@ function FieldEditor({
             type="text"
             // controlled by currentField state from parent (AdminPage)
             value={currentField.label} 
-            // when the user types, the `onChange` event fires.
             onChange={(e) => setCurrentField({ ...currentField, label: e.target.value })}
             placeholder="Enter field label (e.g., Date of Birth)"
             className="form-input"
@@ -46,7 +45,7 @@ function FieldEditor({
           >
             {/* for each type in fieldTypes, render an option */}
             {fieldTypes.map(type => (
-              // key prop is essential for lists in React. It must be a unique string or number.
+              // key prop included for efficient rendering
               <option key={type.value} value={type.value}>
                 {type.label}
               </option>

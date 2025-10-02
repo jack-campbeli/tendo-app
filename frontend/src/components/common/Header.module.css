@@ -3,13 +3,13 @@
   background-color: white;
   border-bottom: 1px solid #e9ecef;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  
+
   /* sticks to top of viewport*/
-  position: sticky; 
+  position: sticky;
   top: 0;
 
   /* ensures header is on top of other content*/
-  z-index: 100; 
+  z-index: 100;
 }
 
 /* Inner header content wrapper - provides max width and centers content */
@@ -22,7 +22,8 @@
   /* makes container into a flexbox and aligns items to the right */
   display: flex;
   justify-content: flex-end;
-  align-items: center;   /* aligns items vertically */
+  align-items: center; /* aligns items vertically */
+  gap: 1rem;
 }
 
 /* Logout button styling */
@@ -50,16 +51,44 @@
   transform: translateY(0);
 }
 
+/* Language selector styling */
+.language_selector {
+  padding: 0.5rem 1rem;
+  background-color: white;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.language_selector:hover {
+  border-color: #6c757d;
+}
+
+.language_selector:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
 /* Media query for smaller screens (like mobile phones) */
 @media (max-width: 768px) {
   .header_content {
     /* Reduce the left/right padding on smaller screens to maximize space. */
     padding: 1rem;
+    gap: 0.5rem;
   }
 
   .logout_button {
     /* Make the button and its text slightly smaller on mobile. */
     padding: 0.4rem 1rem;
+    font-size: 0.875rem;
+  }
+
+  .language_selector {
+    padding: 0.4rem 0.75rem;
     font-size: 0.875rem;
   }
 }

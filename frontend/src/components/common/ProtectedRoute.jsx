@@ -42,6 +42,8 @@ function ProtectedRoute({ children, allowedUserType }) {
   
   // If there's no allowed user type OR the user's type doesn't match,
   // redirect them to their own home page.
+
+  // !!! REVIEW !!!
   if (!allowedUserType || allowedUserType && user.userType !== allowedUserType) {
     return <Navigate to={userTypeRoutes[user.userType]} replace />;
   }

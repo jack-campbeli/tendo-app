@@ -14,18 +14,10 @@
 .admin-title {
   text-align: center;
   color: #1a365d;
-  margin-bottom: 0.5rem;
+  margin-bottom: 2rem;
   font-size: 2.75rem;
   font-weight: 700;
   letter-spacing: -0.5px;
-}
-
-.admin-subtitle {
-  text-align: center;
-  color: #4a5568;
-  margin-bottom: 3rem;
-  font-size: 1.125rem;
-  font-weight: 400;
 }
 
 /* Form sections */

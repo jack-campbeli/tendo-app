@@ -54,6 +54,17 @@ class LoginRequest(BaseModel):
     password: str
 
 
+class TranslatedForm(SQLModel, table=True):
+    """Cached translations of forms."""
+
+    id: int = Field(default=None, primary_key=True)
+    form_id: str = Field(index=True)
+    language_code: str = Field(index=True)
+    translated_form_name: str  # Store translated form name
+    translated_fields: str  # Store translated fields as JSON string
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+
 class LoginResponse(BaseModel):
     """Response model for successful login."""
 

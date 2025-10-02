@@ -17,7 +17,9 @@ from models import (
     User,
     LoginRequest,
     LoginResponse,
+    TranslatedForm,
 )  # Our custom models
+from translation_service import TranslationService
 
 # Database setup - creates connection to SQLite database file
 engine = create_engine("sqlite:///database.db")  # SQLite stores data in a local file
@@ -78,8 +80,9 @@ async def lifespan(app: FastAPI):
     SQLModel.metadata.create_all(engine)
     _initialize_dummy_users()
     yield
-    # Cleanup: close the database connection
+    # cleanup: close database connection
     engine.dispose()
+
 
 # create the FASTAPI app (runs lifespan() above)
 app = FastAPI(lifespan=lifespan)
@@ -107,23 +110,88 @@ async def create_form(form: dict, session: Session = Depends(get_session)):
     session.add(db_form)
     session.commit()
 
+    # Pre-cache Spanish translation
+    try:
+        translator = TranslationService()
+        translated_form_name = translator.translate_form_name(form["form_name"], "es")
+        translated_fields = translator.translate_form_fields(form["fields"], "es")
+
+        translated_form = TranslatedForm(
+            form_id=form_id,
+            language_code="es",
+            translated_form_name=translated_form_name,
+            translated_fields=json.dumps(translated_fields),
+        )
+        session.add(translated_form)
+        session.commit()
+    except Exception as e:
+        print(f"Warning: Failed to pre-cache Spanish translation: {e}")
+
     return {"form_id": form_id}
 
 
-# get the most recent form
+# get the most recent form (with optional translation)
 @app.get("/api/forms/latest")
-async def get_latest_form(session: Session = Depends(get_session)):
+async def get_latest_form(lang: str = "en", session: Session = Depends(get_session)):
     statement = select(Form).order_by(Form.created_at.desc())
     latest_form = session.exec(statement).first()
 
     if not latest_form:
         raise HTTPException(status_code=404, detail="No forms found")
 
-    return {
-        "id": latest_form.id,
-        "form_name": latest_form.form_name,
-        "fields": json.loads(latest_form.fields),
-    }
+    fields = json.loads(latest_form.fields)
+
+    # Return English version directly
+    if lang == "en":
+        return {
+            "id": latest_form.id,
+            "form_name": latest_form.form_name,
+            "fields": fields,
+        }
+
+    # Check cache for translation
+    cache_statement = select(TranslatedForm).where(
+        TranslatedForm.form_id == latest_form.id, TranslatedForm.language_code == lang
+    )
+    cached_translation = session.exec(cache_statement).first()
+
+    if cached_translation:
+        return {
+            "id": latest_form.id,
+            "form_name": cached_translation.translated_form_name,
+            "fields": json.loads(cached_translation.translated_fields),
+        }
+
+    # Translate and cache
+    try:
+        translator = TranslationService()
+        translated_form_name = translator.translate_form_name(
+            latest_form.form_name, lang
+        )
+        translated_fields = translator.translate_form_fields(fields, lang)
+
+        # Cache the translation
+        new_translation = TranslatedForm(
+            form_id=latest_form.id,
+            language_code=lang,
+            translated_form_name=translated_form_name,
+            translated_fields=json.dumps(translated_fields),
+        )
+        session.add(new_translation)
+        session.commit()
+
+        return {
+            "id": latest_form.id,
+            "form_name": translated_form_name,
+            "fields": translated_fields,
+        }
+    except Exception as e:
+        # If translation fails, return English version
+        return {
+            "id": latest_form.id,
+            "form_name": latest_form.form_name,
+            "fields": fields,
+        }
 
 
 # save a form submission
@@ -144,7 +212,7 @@ async def get_submissions(session: Session = Depends(get_session)):
     statement = select(FormSubmission).order_by(FormSubmission.submitted_at.desc())
     submissions = session.exec(statement).all()
 
-    # We need to parse the JSON string back into an object for the frontend
+    # for each submission, create a dictionary with the submission data
     return [
         {
             "id": s.id,

@@ -13,53 +13,39 @@ import styles from './LoginForm.module.css';
  * When state changes, React automatically re-renders (updates) the component.
  */
 function LoginForm() {
-  // useState Hook: Creates state variables
-  // 'State' is data that this component owns and can change. When it changes, React re-renders the component.
-  // Format: const [variableName, functionToUpdateIt] = useState(initialValue)
-  const [email, setEmail] = useState(''); // Holds the text in the email input
-  const [password, setPassword] = useState(''); // Holds the text in the password input
-  const [error, setError] = useState(''); // Holds any login error messages to display
-  const [isLoading, setIsLoading] = useState(false); // Tracks if the login API call is in progress
+  const [email, setEmail] = useState(''); 
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   
   // useNavigate Hook: A function from React Router that lets us programmatically change pages.
   const navigate = useNavigate();
 
-  /**
-   * handleSubmit Function
-   * 
-   * This is an "event handler". It's a function that runs in response to a user action, like clicking a button.
-   * It's marked `async` because it uses `await` to handle the API call, which takes time.
-   */
+  // handle form submission
   const handleSubmit = async (e) => {
-    // `e` is the "event" object. It contains information about the form submission.
-    e.preventDefault(); // This is crucial! It stops the browser's default behavior of refreshing the page on form submission.
-    setError(''); // Reset error message from previous attempts.
-    setIsLoading(true); // Set loading to true to disable the button and show "Logging in...".
+    // `e` is the "event" object.
+    e.preventDefault(); // prevent browser from refreshing
+    setError(''); 
+    setIsLoading(true); 
 
     try {
-      // `fetch` is a browser API for making network requests (like to our backend).
-      // `await` pauses the function until the `fetch` request is complete and we get a response.
+     
+      // send the login request to the backend
       const response = await fetch('http://localhost:8000/api/auth/login', {
-        method: 'POST', // We are sending data, so we use the POST method.
-        // Headers tell the server what kind of data we're sending.
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        // The `body` is the actual data. `JSON.stringify` converts our JavaScript object into a JSON string.
         body: JSON.stringify({ email, password })
       });
       
-      // The `response.ok` property is a quick way to check if the HTTP status code is in the 200-299 range (i.e., successful).
       if (!response.ok) {
-        // If login failed (e.g., wrong password), the server will send back an error.
-        const errorData = await response.json(); // We parse the error message from the server.
-        // We `throw` an error to stop the `try` block and jump to the `catch` block below.
+        const errorData = await response.json(); 
         throw new Error(errorData.detail || 'Login failed');
       }
       
       // If the login was successful, we parse the user data from the server's response.
       const data = await response.json();
       
-      // `localStorage` is a way to store data in the browser that persists even after the tab is closed.
-      // We store user info so they stay logged in if they refresh the page.
+      // store the user data in the browser's localStorage
       localStorage.setItem('user', JSON.stringify({
         email: data.email,
         userType: data.user_type,

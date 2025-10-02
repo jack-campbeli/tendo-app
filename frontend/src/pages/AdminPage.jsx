@@ -183,15 +183,12 @@ function AdminPage() {
   // The return statement contains all the JSX (HTML-like code) that defines what the component looks like.
   return (
     <>
-      <Header title="Admin Dashboard" />
+      <Header title="Admin Dashboard" showLanguageSelector={false} />
       {/* The main container for the entire page. */}
       <div className="admin-container">
         <h1 className="admin-title">
           Form Builder
         </h1>
-        <p className="admin-subtitle">
-          Create beautiful, dynamic forms in minutes
-        </p>
       
       {/* TERNARY OPERATOR FOR CONDITIONAL RENDERING:
           - If `savedFormId` has a value (is "truthy"), it renders the success message.

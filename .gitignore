@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+*.egg-info/
+
+# Database
+backend/database.db
+*.db
+*.sqlite
+*.sqlite3
+
+# API Keys
+backend/api_key.txt
+
+# Environment
+.env
+.env.local
+
+# OS
+.DS_Store
+*.swp
+*.swo
+
+# IDE
+.vscode/
+.idea/
+*.code-workspace
+
+# Node
+node_modules/

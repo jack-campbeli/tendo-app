@@ -6,11 +6,13 @@ import AdminPage from './pages/AdminPage'
 import UserFormPage from './pages/UserFormPage'
 import LoginPage from './pages/LoginPage'
 import ProtectedRoute from './components/common/ProtectedRoute'
+import { LanguageProvider } from './contexts/LanguageContext'
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
+    <LanguageProvider>
+      <BrowserRouter>
+        <Routes>
         {/* Default route - redirects to appropriate page based on user type */}
         <Route 
           path="/" 
@@ -55,8 +57,9 @@ function App() {
           } 
         />
 
-      </Routes>
-    </BrowserRouter>
+        </Routes>
+      </BrowserRouter>
+    </LanguageProvider>
   )
 }
 

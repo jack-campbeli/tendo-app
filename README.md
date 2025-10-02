@@ -21,6 +21,7 @@ A full-stack web application for creating and managing dynamic medical forms. Th
 ### User Interface
 
 - Clean, responsive form display
+- Multi-language support (English/Spanish) with AI translation
 - Form submission handling
 - Data validation
 - Submission confirmation
@@ -76,10 +77,18 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 3. Install Python dependencies:
 
 ```bash
-pip install fastapi uvicorn sqlmodel pytest httpx
+pip install -r requirements.txt
 ```
 
-4. Run the backend server:
+4. (Optional) Configure OpenAI API key for translation feature:
+
+```bash
+echo "your-openai-api-key-here" > api_key.txt
+```
+
+**Note**: Translation feature requires an OpenAI API key. See `TRANSLATION_SETUP.md` for details.
+
+5. Run the backend server:
 
 ```bash
 uvicorn main:app --reload

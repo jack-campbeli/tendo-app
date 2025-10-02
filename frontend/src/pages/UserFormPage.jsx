@@ -2,22 +2,51 @@ import React, { useState, useEffect } from 'react';
 import './UserFormPage.css';
 import FormField from '../components/forms/FormField';
 import Header from '../components/common/Header';
+import { useLanguage } from '../contexts/LanguageContext';
+
+// Local translations for UI elements
+const UI_TRANSLATIONS = {
+  en: {
+    submitButton: 'Submit Form',
+    fillAnother: 'Fill Another Response',
+    successTitle: 'Form Submitted Successfully',
+    successMessage: 'Thank you for your response. Your submission has been recorded.',
+    loadingForm: 'Loading Form...',
+    errorLoading: 'Error Loading Form',
+    noFormsAvailable: 'No Forms Available',
+    noFormsMessage: 'There are currently no forms available for you to fill out.',
+    noFormsContact: 'Please check back later or contact the administrator.'
+  },
+  es: {
+    submitButton: 'Enviar Formulario',
+    fillAnother: 'Completar Otra Respuesta',
+    successTitle: 'Formulario Enviado Exitosamente',
+    successMessage: 'Gracias por su respuesta. Su envío ha sido registrado.',
+    loadingForm: 'Cargando Formulario...',
+    errorLoading: 'Error al Cargar Formulario',
+    noFormsAvailable: 'No Hay Formularios Disponibles',
+    noFormsMessage: 'Actualmente no hay formularios disponibles para completar.',
+    noFormsContact: 'Por favor, vuelva más tarde o contacte al administrador.'
+  }
+};
 
 function UserFormPage() {
+  const { language } = useLanguage();
+  const t = UI_TRANSLATIONS[language] || UI_TRANSLATIONS.en;
   const [form, setForm] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState({});
   const [submitted, setSubmitted] = useState(false);
 
-  // fetch the latest form on page load
+  // fetch the latest form on page load or when language changes
   useEffect(() => {
     const fetchLatestForm = async () => {
       try {
         setLoading(true);
 
-        // get the latest form (fetch() defaults to GET)
-        const response = await fetch('http://localhost:8000/api/forms/latest');
+        // get the latest form with language parameter
+        const response = await fetch(`http://localhost:8000/api/forms/latest?lang=${language}`);
         
         if (!response.ok) {
           if (response.status === 404) {
@@ -45,13 +74,9 @@ function UserFormPage() {
     };
 
     fetchLatestForm();
-  }, []); // Empty dependency array [] = runs only once on mount
+  }, [language]); // Re-fetch when language changes
 
   // replaces the form data with the new value while keeping the existing data
-  /**
-   * Helper function to initialize form data with empty values
-   * This follows the DRY principle - we use it in multiple places!
-   */
   const initializeFormData = (fields) => {
     const initialData = {};
     fields.forEach((field, index) => {
@@ -112,7 +137,7 @@ function UserFormPage() {
         <Header title="Patient Form" />
         <div className="user-form-container">
           <div className="loading-container">
-            <h1>Loading Form...</h1>
+            <h1>{t.loadingForm}</h1>
           </div>
         </div>
       </>
@@ -125,7 +150,7 @@ function UserFormPage() {
         <Header title="Patient Form" />
         <div className="user-form-container">
           <div className="error-container">
-            <h1>Error Loading Form</h1>
+            <h1>{t.errorLoading}</h1>
             <p>{error}</p>
           </div>
         </div>
@@ -139,9 +164,9 @@ function UserFormPage() {
         <Header title="Patient Form" />
         <div className="user-form-container">
           <div className="no-form-container">
-            <h1>No Forms Available</h1>
-            <p>There are currently no forms available for you to fill out.</p>
-            <p>Please check back later or contact the administrator.</p>
+            <h1>{t.noFormsAvailable}</h1>
+            <p>{t.noFormsMessage}</p>
+            <p>{t.noFormsContact}</p>
           </div>
         </div>
       </>
@@ -154,15 +179,21 @@ function UserFormPage() {
         <Header title="Patient Form" />
         <div className="user-form-container">
           <div className="submission-success">
+
+            {/* SVG checkmark icon */}
             <div className="submission-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h1 className="submission-title">Form Submitted Successfully</h1>
+
+            {/* Success title and message */}
+            <h1 className="submission-title">{t.successTitle}</h1>
             <p className="submission-message">
-              Thank you for your response. Your submission has been recorded.
+              {t.successMessage}
             </p>
+
+            {/* Fill another response button */}
             <button
               type="button"
               className="submit-button"
@@ -171,7 +202,7 @@ function UserFormPage() {
                 setSubmitted(false); // Reset state to show form again
               }}
             >
-              Fill Another Response
+              {t.fillAnother}
             </button>
           </div>
         </div>
@@ -204,7 +235,7 @@ function UserFormPage() {
             type="submit" 
             className="submit-button"
           >
-            Submit Form
+            {t.submitButton}
           </button>
         </form>
       </div>
