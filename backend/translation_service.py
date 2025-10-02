@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from openai import OpenAI
+from openai import AsyncOpenAI
 
 
 class TranslationService:
@@ -14,7 +14,7 @@ class TranslationService:
             raise ValueError(
                 "OpenAI API key not found. Create backend/api_key.txt with your key."
             )
-        self._client = OpenAI(api_key=api_key)
+        self._client = AsyncOpenAI(api_key=api_key)
 
     def _load_api_key(self) -> str:
         """Load API key from local file."""
@@ -23,7 +23,7 @@ class TranslationService:
             return key_file.read_text().strip()
         return ""
 
-    def translate_form_name(self, form_name: str, target_language: str) -> str:
+    async def translate_form_name(self, form_name: str, target_language: str) -> str:
         """
         Translate form name to target language.
 
@@ -37,15 +37,18 @@ class TranslationService:
         if target_language == "en":
             return form_name
 
+        # get target language
         target_lang_name = self._LANGUAGE_NAMES.get(target_language, target_language)
 
+        # prompt
         prompt = f"""Translate the following form name to {target_lang_name}. 
                     Keep medical terminology accurate and professional. 
                     Return ONLY the translated text, nothing else.
 
                     Form name: {form_name}"""
 
-        response = self._client.chat.completions.create(
+        # send prompt to OpenAI and get response
+        response = await self._client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
                 {
@@ -57,9 +60,10 @@ class TranslationService:
             temperature=0.3,
         )
 
+        # return first and only response's content
         return response.choices[0].message.content.strip()
 
-    def translate_responses_to_english(
+    async def translate_responses_to_english(
         self, response_data: dict, source_language: str
     ) -> dict:
         """
@@ -75,6 +79,7 @@ class TranslationService:
         if source_language == "en":
             return response_data
 
+        # get source language
         source_lang_name = self._LANGUAGE_NAMES.get(source_language, source_language)
 
         # Extract non-empty text values to translate
@@ -96,7 +101,7 @@ class TranslationService:
 
                     {json.dumps(translatable_items, ensure_ascii=False)}"""
 
-        response = self._client.chat.completions.create(
+        response = await self._client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
                 {
@@ -124,7 +129,7 @@ class TranslationService:
 
         return translated_response
 
-    def translate_form_fields(
+    async def translate_form_fields(
         self, fields: list[dict], target_language: str
     ) -> list[dict]:
         """
@@ -143,7 +148,7 @@ class TranslationService:
         target_lang_name = self._LANGUAGE_NAMES.get(target_language, target_language)
 
         translatable_content = self._extract_translatable_content(fields)
-        translated_content = self._translate_batch(
+        translated_content = await self._translate_batch(
             translatable_content, target_lang_name
         )
 
@@ -163,7 +168,9 @@ class TranslationService:
             content.append(item)
         return content
 
-    def _translate_batch(self, content: list[dict], target_language: str) -> list[dict]:
+    async def _translate_batch(
+        self, content: list[dict], target_language: str
+    ) -> list[dict]:
         """Translate batch of content using OpenAI."""
         prompt = f"""Translate the following form field content to {target_language}. 
                     Maintain the JSON structure exactly. Only translate the text values, not the keys.
@@ -171,7 +178,7 @@ class TranslationService:
 
                     {json.dumps(content, ensure_ascii=False)}"""
 
-        response = self._client.chat.completions.create(
+        response = await self._client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
                 {

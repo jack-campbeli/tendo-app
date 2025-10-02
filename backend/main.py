@@ -113,8 +113,10 @@ async def create_form(form: dict, session: Session = Depends(get_session)):
     # Pre-cache Spanish translation
     try:
         translator = TranslationService()
-        translated_form_name = translator.translate_form_name(form["form_name"], "es")
-        translated_fields = translator.translate_form_fields(form["fields"], "es")
+        translated_form_name = await translator.translate_form_name(
+            form["form_name"], "es"
+        )
+        translated_fields = await translator.translate_form_fields(form["fields"], "es")
 
         translated_form = TranslatedForm(
             form_id=form_id,
@@ -165,10 +167,10 @@ async def get_latest_form(lang: str = "en", session: Session = Depends(get_sessi
     # Translate and cache
     try:
         translator = TranslationService()
-        translated_form_name = translator.translate_form_name(
+        translated_form_name = await translator.translate_form_name(
             latest_form.form_name, lang
         )
-        translated_fields = translator.translate_form_fields(fields, lang)
+        translated_fields = await translator.translate_form_fields(fields, lang)
 
         # Cache the translation
         new_translation = TranslatedForm(
@@ -204,7 +206,7 @@ async def save_submission(submission: dict, session: Session = Depends(get_sessi
     if language != "en":
         try:
             translator = TranslationService()
-            submission_data = translator.translate_responses_to_english(
+            submission_data = await translator.translate_responses_to_english(
                 submission_data, language
             )
         except Exception as e:

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './UserFormPage.css';
 import FormField from '../components/forms/FormField';
 import Header from '../components/common/Header';
@@ -41,6 +41,8 @@ function UserFormPage() {
   const [formData, setFormData] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // Use ref for immediate double-click prevention (doesn't wait for React re-render)
+  const isSubmittingRef = useRef(false);
 
   // fetch the latest form on page load or when language changes
   useEffect(() => {
@@ -102,10 +104,18 @@ function UserFormPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isSubmitting) return; // Prevent multiple submissions
+    
+    // Double-check prevention: use both state and ref
+    if (isSubmitting || isSubmittingRef.current) {
+      console.log('Submission already in progress, ignoring duplicate request');
+      return;
+    }
 
+    // Set both immediately to prevent any race conditions
+    isSubmittingRef.current = true;
     setIsSubmitting(true);
     setError(null);
+    
     try {
       const submissionPayload = {
         form_id: form.id,
@@ -129,7 +139,8 @@ function UserFormPage() {
       setSubmitted(true);
     } catch (err) {
       setError(err.message);
-    } finally {
+      // Reset on error so user can retry
+      isSubmittingRef.current = false;
       setIsSubmitting(false);
     }
   };
@@ -210,6 +221,8 @@ function UserFormPage() {
               onClick={() => {
                 resetFormInputs();
                 setSubmitted(false); // Reset state to show form again
+                setIsSubmitting(false); // Reset submitting state
+                isSubmittingRef.current = false; // Reset ref
               }}
             >
               {t.fillAnother}
