@@ -3,19 +3,26 @@
   background-color: white;
   border-bottom: 1px solid #e9ecef;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  position: sticky;
+  
+  /* sticks to top of viewport*/
+  position: sticky; 
   top: 0;
-  z-index: 100;
+
+  /* ensures header is on top of other content*/
+  z-index: 100; 
 }
 
-/* Inner content wrapper - provides max width and centers content */
+/* Inner header content wrapper - provides max width and centers content */
 .header_content {
   max-width: 1200px;
+  /* `margin: 0 auto` is a classic CSS trick to center a block-level element horizontally. */
   margin: 0 auto;
   padding: 1rem 2rem;
+
+  /* makes container into a flexbox and aligns items to the right */
   display: flex;
   justify-content: flex-end;
-  align-items: center;
+  align-items: center;   /* aligns items vertically */
 }
 
 /* Logout button styling */
@@ -26,29 +33,32 @@
   border: none;
   border-radius: 6px;
   font-size: 0.95rem;
-  font-weight: 500;
+  font-weight: 500; /* Medium weight. */
   cursor: pointer;
   transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
-/* Logout button hover effect */
+/* On hover, we change the background to a red to signify a destructive action (logging out). */
 .logout_button:hover {
   background-color: #dc3545;
+  /* The button lifts up slightly on hover for a nice interactive feel. */
   transform: translateY(-1px);
 }
 
-/* Logout button active (being clicked) effect */
+/* When clicked, the button returns to its original position to simulate being pressed. */
 .logout_button:active {
   transform: translateY(0);
 }
 
-/* Responsive design for smaller screens */
+/* Media query for smaller screens (like mobile phones) */
 @media (max-width: 768px) {
   .header_content {
+    /* Reduce the left/right padding on smaller screens to maximize space. */
     padding: 1rem;
   }
 
   .logout_button {
+    /* Make the button and its text slightly smaller on mobile. */
     padding: 0.4rem 1rem;
     font-size: 0.875rem;
   }

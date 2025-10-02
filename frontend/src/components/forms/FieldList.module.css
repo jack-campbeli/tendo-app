@@ -1,13 +1,15 @@
 /* Field list */
+/* Styles for a single item in the list of fields. */
 .field_item {
   background: white;
   border: 1px solid #cbd5e0;
   border-radius: 8px;
-  padding: 1.125rem;
+  padding: 1.125rem; 
   margin-bottom: 0.875rem;
+  /* Using flexbox to enable space-between layout */
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  justify-content: space-between; /* pushes the info and controls to opposite ends */
+  align-items: center; /* vertically aligns content */
   transition: all 0.2s ease;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
@@ -17,7 +19,11 @@
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
 }
 
+/* This container holds the text part of the field item. */
 .field_info {
+  /* `flex: 1` is a flexbox property that makes this element "flexible".
+     It will grow to take up any available space in the flex container,
+     pushing the controls to the far right. */
   flex: 1;
 }
 
@@ -25,13 +31,16 @@
   color: #1a365d;
   font-size: 1rem;
   font-weight: 600;
-  display: block;
+  display: block; /* Ensures the label takes its own line. */
   margin-bottom: 0.5rem;
 }
 
-.field_type {
-  display: inline-block;
-  background: #0066cc;
+/* Styling for the small colored "pills" that show the field type and required status. */
+.field_type,
+.field_required {
+
+  /* REVIEW: why does only field_required have 'display: inline-block' ? */
+  display: inline-block; /* allows padding and margins, unlike inline */
   color: white;
   padding: 0.25rem 0.625rem;
   border-radius: 4px;
@@ -40,21 +49,21 @@
   margin-right: 0.5rem;
 }
 
-.field_required {
-  display: inline-block;
-  background: #e53e3e;
-  color: white;
-  padding: 0.25rem 0.625rem;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: 600;
+.field_type {
+  background: #0066cc; 
 }
 
+.field_required {
+  background: #e53e3e; 
+}
+
+/* Container for the list of options, if the field has them. */
 .field_options {
   margin-top: 0.625rem;
   padding: 0.625rem;
-  background: #ebf8ff;
+  background: #ebf8ff; 
   border-radius: 4px;
+  /* `border-left` creates a colored vertical bar, a common UI pattern to draw attention. */
   border-left: 3px solid #0066cc;
   font-size: 0.875rem;
   color: #4a5568;
@@ -65,12 +74,14 @@
   font-weight: 600;
 }
 
+/* Container for the control buttons (up, down, remove). */
 .field_controls {
-  display: flex;
-  gap: 0.5rem;
-  margin-left: 1rem;
+  display: flex; /* Aligns the buttons in a row. */
+  gap: 0.5rem; /* Adds space between the buttons. */
+  margin-left: 1rem; /* Adds space between the field info and the controls. */
 }
 
+/* Styling for the Up/Down arrow buttons. */
 .btn_move {
   background: #718096;
   color: white;
@@ -79,16 +90,19 @@
   border-radius: 6px;
   cursor: pointer;
   font-size: 1rem;
-  line-height: 1;
+  line-height: 1; /* Helps to center the arrow character vertically. */
   transition: all 0.2s ease;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  /* Setting a min-width and min-height ensures the buttons are perfectly square. */
   min-width: 32px;
   min-height: 32px;
+  /* Using flexbox again to perfectly center the arrow character inside the button. */
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
+/* on hover, change color when NOT disabled */
 .btn_move:hover:not(:disabled) {
   background: #4a5568;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
@@ -98,16 +112,18 @@
   transform: translateY(1px);
 }
 
+/* Disabled button styling */
 .btn_move:disabled {
-  background: #cbd5e0;
+  background: #cbd5e0; /* Lighter gray. */
   color: #a0aec0;
   cursor: not-allowed;
   box-shadow: none;
   opacity: 0.6;
 }
 
+/* Remove button styling */
 .btn_remove {
-  background: #e53e3e;
+  background: #e53e3e; 
   color: white;
   border: none;
   padding: 0.5rem 0.875rem;
@@ -120,7 +136,7 @@
 }
 
 .btn_remove:hover {
-  background: #c53030;
+  background: #c53030; /* Darker red on hover. */
   box-shadow: 0 2px 4px rgba(229, 62, 62, 0.4);
 }
 
@@ -128,17 +144,20 @@
   transform: translateY(1px);
 }
 
-/* Responsive design */
+/* Responsive design for smaller screens. !! REIVEW THIS !! */
 @media (max-width: 768px) {
   .field_item {
+    /* `flex-direction: column` stacks the flex items vertically instead of horizontally. */
     flex-direction: column;
+    /* `align-items: flex-start` aligns the items to the left. */
     align-items: flex-start;
   }
 
   .field_controls {
-    width: 100%;
-    margin-left: 0;
-    margin-top: 1rem;
+    width: 100%; /* Make the controls container take the full width. */
+    margin-left: 0; /* Remove the left margin. */
+    margin-top: 1rem; /* Add space above the controls. */
+    /* `justify-content: flex-end` pushes the buttons to the right side of the container. */
     justify-content: flex-end;
   }
 }

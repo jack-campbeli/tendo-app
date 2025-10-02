@@ -8,30 +8,34 @@ function FieldList({
   onMoveDown,
   onRemove
 }) {
+  
+  // if no fields, render nothing
   if (fields.length === 0) {
     return null;
   }
 
   return (
     <div className="form-section">
+      {/* CONDITIONAL RENDERING: number of fields in title */}
       <h3 className="section-title">3. Current Form Fields ({fields.length} {fields.length === 1 ? 'field' : 'fields'})</h3>
 
-      {/* ARRAY MAPPING: This loops over the `fields` array. For each `field` object in the
-          array, it creates a `<div>` element to display its information and controls. */}
+      {/* iterate over fields and render a div for each */}
       {fields.map((field, index) => (
-        // The `key` prop is crucial for lists. It helps React identify which items have
-        // changed, been added, or been removed, improving performance and preventing bugs.
-        // We use `field.id` because it's a unique identifier for each field.
+        
+        // !!! REVIEW WHY KEY PRO IS IMPORTANT: !!!
+        // key prop is essential for lists in React. It must be a unique string or number.
         <div key={field.id} className={styles.field_item}>
           <div className={styles.field_info}>
             <strong className={styles.field_label}>{field.label}</strong>
-            {/* Display the user-friendly label for the field type */}
+            {/* REVIEW OPTIONAL CHAINING: im confused */}
             <span className={styles.field_type}>
               {fieldTypes.find(t => t.value === field.type)?.label || field.type}
             </span>
-            {/* SHORT-CIRCUIT RENDERING: The "Required" span is only rendered if `field.required` is true. */}
+            
+            {/* CONDITIONAL RENDERING: only render if field is required */}
             {field.required && <span className={styles.field_required}>Required</span>}
-            {/* Displaying field options if they exist */}
+            
+            {/* CONDITIONAL RENDERING: only show options div if field has options */}
             {field.options && field.options.length > 0 && (
               <div className={styles.field_options}>
                 <strong>Options:</strong> {field.options.join(', ')}
@@ -39,20 +43,17 @@ function FieldList({
             )}
           </div>
 
-          {/* FIELD CONTROLS */}
+          {/* This section contains the buttons to move or remove the field. */}
           <div className={styles.field_controls}>
-            {/* The `disabled` attribute is set based on a condition. The button is disabled
-                if the field is already at the very top of the list. */}
             <button
               onClick={() => onMoveUp(index)}
-              disabled={index === 0}
+              disabled={index === 0} // disabled if at top
               className={styles.btn_move}
             >↑</button>
 
-            {/* This button is disabled if the field is at the very bottom of the list. */}
             <button
               onClick={() => onMoveDown(index)}
-              disabled={index === fields.length - 1}
+              disabled={index === fields.length - 1} // disabled if at bottom
               className={styles.btn_move}
             >↓</button>
 

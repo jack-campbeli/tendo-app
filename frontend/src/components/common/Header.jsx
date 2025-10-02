@@ -12,28 +12,21 @@ import styles from './Header.module.css';
  * - title: The text to display in the header (e.g., "Admin Dashboard")
  */
 function Header({ title }) {
-  // useNavigate Hook: Allows us to redirect users to different pages
+  // useNavigate Hook: A function from React Router that lets us programmatically change pages.
   const navigate = useNavigate();
 
-  /**
-   * handleLogout Function
-   * 
-   * Logs the user out by:
-   * 1. Removing user data from localStorage
-   * 2. Redirecting to the login page
-   */
+
   const handleLogout = () => {
-    // Remove user info from localStorage (clears the session)
+    // remove user from localStorage
     localStorage.removeItem('user');
-    
-    // Redirect to login page
+    // redirect to login page
     navigate('/login');
   };
 
   return (
     <header className={styles.header}>
+      {/* inner div is used to control width and alignment of header's content */}
       <div className={styles.header_content}>
-        {/* Right side: Logout button */}
         <button 
           onClick={handleLogout}
           className={styles.logout_button}
@@ -46,4 +39,3 @@ function Header({ title }) {
 }
 
 export default Header;
-

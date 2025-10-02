@@ -5,17 +5,17 @@
 
 /* Form title styling */
 .form_title {
-  margin: 0 0 0.5rem 0;
+  margin-bottom: 0.5rem; /* 8px space below the title */
   font-size: 1.75rem;
   color: #1a365d;
   text-align: center;
-  font-weight: 700;
-  letter-spacing: -0.5px;
+  font-weight: 700; /* bold font */
+  letter-spacing: -0.5px; /* bring characters closer */
 }
 
 /* Subtitle under the title */
 .form_subtitle {
-  margin: 0 0 2rem 0;
+  margin-bottom: 2rem; /* 32px space below the subtitle */
   color: #4a5568;
   text-align: center;
   font-size: 0.875rem;
@@ -23,62 +23,69 @@
 
 /* Error message box */
 .error_message {
-  padding: 1rem 1.25rem;
-  margin-bottom: 1.5rem;
-  background: #fed7d7;
-  border: 1px solid #fc8181;
-  border-radius: 6px;
-  color: #742a2a;
+  padding: 1rem 1.25rem; /* 16px top/bottom, 20px left/right inner padding. */
+  margin-bottom: 1.5rem; /* 24px space below the error box. */
+  background: #fed7d7; 
+  border: 1px solid #fc8181; 
+  border-radius: 6px; /* rounded corners */
+  color: #742a2a; 
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 500; /* Medium font weight. */
+  /* A subtle shadow to make the box pop. Uses a red color with transparency. */
   box-shadow: 0 2px 4px rgba(252, 129, 129, 0.2);
 }
 
 /* Login button styling */
 .login_button {
-  width: 100%;
-  padding: 1rem 2rem;
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: white;
-  background: #0066cc;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  margin-top: 1rem;
+  width: 100%; /* Makes the button span the full width of the form. */
+  padding: 1rem 2rem; 
+  font-size: 1.125rem; 
+  font-weight: 600; /* Semi-bold text. */
+  color: white; /* text color*/
+  background: #0066cc; /* background color */
+  border: none; 
+  border-radius: 6px; /* Rounded corners. */
+  cursor: pointer; /* Changes the mouse cursor to a pointer (hand) on hover. */
+  transition: all 0.2s ease; 
+  margin-top: 1rem; 
+  /* A blue shadow to give the button a sense of depth and make it stand out. */
   box-shadow: 0 4px 8px rgba(0, 102, 204, 0.25);
 }
 
-/* Button hover effect */
+/* on hover, background color and shadow change */
 .login_button:hover {
-  background: #0052a3;
+  background: #0052a3; 
+  /* move button up by 1 pixel, creating a lifting effect */
   transform: translateY(-1px);
   box-shadow: 0 6px 12px rgba(0, 102, 204, 0.35);
 }
 
-/* Button active (being clicked) effect */
+/* on active, button moves back down simulating a press */
 .login_button:active {
   transform: translateY(0);
 }
 
-/* Button when disabled (during loading) */
+/* on disabled, button looks flat and inactive */
 .login_button:disabled {
-  background: #a0aec0;
-  cursor: not-allowed;
+  background: #a0aec0; 
+  cursor: not-allowed; /* The cursor changes to indicate the button cannot be clicked. */
+  /* We remove the transform and shadow to make it look flat and inactive. */
   transform: none;
   box-shadow: none;
-  opacity: 0.6;
+  opacity: 0.6; /* Making it slightly transparent further indicates it's disabled. */
 }
 
-/* Responsive design */
+/* REVIEW IF THIS IS NEEDED:on smaller screens, reduce font size and padding */
+
+/* `MEDIA QUERY`: This is the core of responsive design. The styles inside this block
+   will ONLY apply when the screen width is 768px or less (e.g., on tablets and phones). */
 @media (max-width: 768px) {
   .form_title {
-    font-size: 1.5rem;
+    font-size: 1.5rem; /* We reduce the title's font size on smaller screens. */
   }
 
   .login_button {
-    padding: 1rem;
-    font-size: 1rem;
+    padding: 1rem; /* Reduce padding on smaller screens to save space. */
+    font-size: 1rem; /* Reduce font size. */
   }
 }

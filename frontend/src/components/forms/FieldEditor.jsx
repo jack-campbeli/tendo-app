@@ -12,13 +12,23 @@ function FieldEditor({
     <div className="form-section">
       <h3 className="section-title">2. Add Fields</h3>
 
+      {/* 
+      
+      !! REVIEW THIS !!
+      
+      This `div` uses a CSS Grid layout (defined in the CSS module) to place the
+          label and type inputs side-by-side on larger screens. 
+      
+      */}
       <div className={styles.field_grid}>
         {/* Field Label Input */}
         <div>
           <label className="form-label">Field Label:</label>
           <input
             type="text"
-            value={currentField.label}
+            // controlled by currentField state from parent (AdminPage)
+            value={currentField.label} 
+            // when the user types, the `onChange` event fires.
             onChange={(e) => setCurrentField({ ...currentField, label: e.target.value })}
             placeholder="Enter field label (e.g., Date of Birth)"
             className="form-input"
@@ -28,13 +38,15 @@ function FieldEditor({
         {/* Field Type Dropdown */}
         <div>
           <label className="form-label">Field Type:</label>
+          {/* A `<select>` element creates a dropdown list. */}
           <select
             value={currentField.type}
             onChange={(e) => setCurrentField({ ...currentField, type: e.target.value })}
             className="form-input"
           >
-            {/* Loop through the `fieldTypes` array to create an `<option>` for each type. */}
+            {/* for each type in fieldTypes, render an option */}
             {fieldTypes.map(type => (
+              // key prop is essential for lists in React. It must be a unique string or number.
               <option key={type.value} value={type.value}>
                 {type.label}
               </option>
@@ -43,7 +55,7 @@ function FieldEditor({
         </div>
       </div>
 
-      {/* Options Input - shown only for select, checkbox, radio */}
+      {/* CONDITIONAL RENDERING: if the current field type is in typesWithOptions*/}
       {typesWithOptions.includes(currentField.type) && (
         <div className={styles.options_container}>
           <label className="form-label">Options (comma-separated):</label>
@@ -62,8 +74,9 @@ function FieldEditor({
         <label className={styles.checkbox_label}>
           <input
             type="checkbox"
+            // for a checkbox, its state (checked or not) is stored in the `checked` attribute, not `value`.
             checked={currentField.required}
-            // For checkboxes, we use `e.target.checked` (true/false) instead of `e.target.value`.
+            // The value we get from the `onChange` event for a checkbox is `e.target.checked`, which is a boolean (true or false).
             onChange={(e) => setCurrentField({ ...currentField, required: e.target.checked })}
             className={styles.checkbox_input}
           />
@@ -71,6 +84,7 @@ function FieldEditor({
         </label>
       </div>
 
+      {/* add field button */}
       <button onClick={onAddField} className="btn btn-success">
         ➕ Add Field
       </button>

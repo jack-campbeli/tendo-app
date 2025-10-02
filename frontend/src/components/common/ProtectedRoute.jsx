@@ -21,32 +21,33 @@ import { Navigate } from 'react-router-dom';
  */
 function ProtectedRoute({ children, allowedUserType }) {
 
-  // get user data from localStorage
+  // get user from localStorage
   const userString = localStorage.getItem('user');
   
-  // if no user data, redirect to login page
+  // If `userString` is null or undefined (falsy), it means the user is not logged in.
   if (!userString) {
+    // We use the `<Navigate>` component from React Router to redirect them to="/login"` is the destination.
+    // `replace` prop revents back button from navigating back to the protected page
     return <Navigate to="/login" replace />;
   }
 
-  // user string -> JS object (via JSON.parse)
+  // JSON string -> JS object
   const user = JSON.parse(userString);
 
-  // if no allowedUserType OR user type doesn't match, redirect to user's home page
-  if (!allowedUserType || user.userType !== allowedUserType) {
-    // admin goes to admin page
-    if (user.userType === 'admin') {
-      return <Navigate to="/admin" replace />;
-    }
-    // patient goes to latest form page
-    if (user.userType === 'patient') {
-      return <Navigate to="/forms/latest" replace />;
-    }
+  // Map user types to their home pages
+  const userTypeRoutes = {
+    admin: '/admin',
+    patient: '/forms/latest'
+  };
+  
+  // If there's no allowed user type OR the user's type doesn't match,
+  // redirect them to their own home page.
+  if (!allowedUserType || allowedUserType && user.userType !== allowedUserType) {
+    return <Navigate to={userTypeRoutes[user.userType]} replace />;
   }
 
-  // else show the protected page (user is authorized)
+  // if all checks pass, render the children
   return children;
 }
 
 export default ProtectedRoute;
-

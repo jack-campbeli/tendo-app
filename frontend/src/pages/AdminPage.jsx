@@ -13,7 +13,7 @@ function AdminPage() {
   const [currentField, setCurrentField] = useState({
     label: '',      // What the user will see (e.g. "Date of Birth")
     type: 'text',   // What kind of input (text, email, date, etc.)
-    required: false, // Whether this field is mandatory
+    required: false, 
     options: '', // For comma-separated options for select, checkbox, radio
   });
   
@@ -38,24 +38,25 @@ function AdminPage() {
 
   // ========== FIELD MANAGEMENT FUNCTIONS ==========
   
-  // HOW ADDING FIELDS WORKS:
+  // ========== Handle Field Adding ==========
   // 1. User fills out currentField (label, type, required)
   // 2. Clicks "Add Field" which triggers this function
   // 3. We validate the input and add it to the fields array
   const handleAddField = () => {
-    // Validation: make sure they entered a label
+    
+    // ensure label is not empty
     if (!currentField.label.trim()) {
       setError('Field label is required');
       return;
     }
 
-    // New validation for options
+    // ensure options are not empty for types with options (select, checkbox, radio)
     if (typesWithOptions.includes(currentField.type) && !currentField.options.trim()) {
       setError('Options are required for select, checkbox, or radio field types.');
       return;
     }
 
-    // Create a new field object with a unique ID
+    // create new field object from 'currentField' with unique ID
     const newField = {
       id: Date.now(), // Simple way to create unique IDs (timestamp)
       label: currentField.label.trim(), // Remove extra spaces
@@ -68,50 +69,42 @@ function AdminPage() {
       const options = currentField.options
         .split(',')
         .map(opt => opt.trim())
-        .filter(Boolean);
+        .filter(Boolean); // removes fasly values
 
-      if (options.length < 1) { // Also checking for at least one valid option
+      // ensure at least one valid option
+      if (options.length < 1) {
         setError('Please provide at least one valid option.');
         return;
       }
       newField.options = options;
     }
 
-    // Add the new field to our fields array using the spread operator
-    // This creates a new array with all existing fields plus the new one
+    // add new field to fields array and reset current field 
     setFields([...fields, newField]);
-    
-    // Reset the form for the next field
     setCurrentField({ label: '', type: 'text', required: false, options: '' });
     setError(null);
   };
 
-  // HOW REMOVING FIELDS WORKS:
-  // We filter out the field with the matching ID
+  // ========== Handle Field Removal ==========
   const handleRemoveField = (fieldId) => {
     setFields(fields.filter(field => field.id !== fieldId));
   };
 
-  // HOW MOVING FIELDS UP/DOWN WORKS:
-  // We swap the positions of two adjacent fields in the array
-  
+
+  // ========== Handle Field Moving ==========
   const handleMoveFieldUp = (index) => {
-    // Can't move the first item up
+    // if already at top, return
     if (index === 0) return;
     
-    // Create a copy of the fields array
-    const newFields = [...fields];
-    
+    const newFields = [...fields];    
     // Swap the current field with the one above it
     // This uses array destructuring to swap two elements
     [newFields[index], newFields[index - 1]] = [newFields[index - 1], newFields[index]];
-    
-    // Update the state with the new order
     setFields(newFields);
   };
 
   const handleMoveFieldDown = (index) => {
-    // Can't move the last item down
+    // if already at bottom, return
     if (index === fields.length - 1) return;
     
     const newFields = [...fields];
@@ -120,20 +113,14 @@ function AdminPage() {
     setFields(newFields);
   };
 
-  // ========== API COMMUNICATION ==========
-  
-  // HOW SAVING FORMS WORKS:
-  // 1. Validate that we have a form name and at least one field
-  // 2. Format the data the way our API expects it
-  // 3. Send a POST request to the backend
-  // 4. Handle the response (success or error)
+  // ========== Handle Form Saving ==========
   const handleSaveForm = async () => {
-    // Validation checks
+    
+    // Validate that we have a form name and at least one field
     if (!formName.trim()) {
       setError('Form name is required');
       return;
     }
-
     if (fields.length === 0) {
       setError('At least one field is required');
       return;
@@ -148,7 +135,6 @@ function AdminPage() {
       const formData = {
         form_name: formName.trim(),
         // Remove the temporary 'id' field since the API doesn't need it
-        // The spread operator (...field) copies all properties except 'id'
         fields: fields.map(({ id, ...field }) => field)
       };
 
@@ -156,23 +142,23 @@ function AdminPage() {
       const response = await fetch('http://localhost:8000/api/forms', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json', // Tell the server we're sending JSON
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData) // Convert our JS object to JSON string
       });
 
-      // Check if the request was successful
+      // if not successful, throw error
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      // Parse the JSON response
+      // parse JSON response
       const result = await response.json();
       
-      // Store the form ID that the API returned
+      // store the form ID that the API returned
       setSavedFormId(result.form_id);
       
-      // Reset the form so they can create another one
+      // reset the form
       setFormName('');
       setFields([]);
       setCurrentField({ label: '', type: 'text', required: false, options: '' });
@@ -186,7 +172,8 @@ function AdminPage() {
     }
   };
 
-  // Reset to create a new form after successfully saving one
+  // ========== Handle Form Starting ==========
+  // reset to create a new form after successfully saving one
   const handleStartNewForm = () => {
     setSavedFormId(null);
     setError(null);
@@ -213,7 +200,7 @@ function AdminPage() {
         // SUCCESS STATE: This block is shown only after a form is successfully saved.
         <SuccessMessage 
           formId={savedFormId}
-          onCreateAnother={handleStartNewForm}
+          onStartNewForm={handleStartNewForm}
         />
       ) : (
         // FORM BUILDER STATE: If no form has been saved yet, show the main interface.

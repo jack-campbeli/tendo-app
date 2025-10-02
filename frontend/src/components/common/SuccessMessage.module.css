@@ -1,98 +1,116 @@
 /* Success Message Component Styles */
 
+/* The main container for the success message. It's styled like a "card". */
 .success_card {
   background: white;
   border: 1px solid #cbd5e0;
-  border-radius: 8px;
+  border-radius: 8px; /* Rounded corners. */
   padding: 2.5rem 2rem;
-  text-align: center;
-  margin-bottom: 2rem;
+  text-align: center; 
+  margin-bottom: 2rem; 
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  /* `animation` applies our custom `slideIn` keyframes to the card.
+     The values are: animation-name duration timing-function.
+     `ease-out` makes the animation start fast and slow down at the end. */
   animation: slideIn 0.4s ease-out;
 }
 
+/* `KEYFRAMES` are used to define the steps in a CSS animation. */
 @keyframes slideIn {
+  
+  /* `from` = starting state */
   from {
-    opacity: 0;
-    transform: translateY(-10px);
+    opacity: 0; /* Starts transparent. */
+    transform: translateY(
+      -10px
+    ); /* Starts 10px higher than its final position. */
   }
+  
+  /* `to` = ending state */
   to {
-    opacity: 1;
-    transform: translateY(0);
+    /* ends fully visible and in normal position */
+    opacity: 1; 
+    transform: translateY(0); 
   }
 }
 
-/* Success Icon */
+/* The circular container for the checkmark icon. */
 .icon_container {
   width: 64px;
   height: 64px;
-  margin: 0 auto 1.5rem;
-  background: #0066cc;
-  border-radius: 50%;
+  margin: 0 auto 1.5rem; /* Centers the circle horizontally and adds space below it. */
+  background: #0066cc; /* Our primary blue color. */
+  border-radius: 50%; /* A border-radius of 50% makes a square into a perfect circle. */
+  /* Using flexbox to perfectly center the SVG icon inside the circle. */
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: center; /* Vertical centering */
+  justify-content: center; /* Horizontal centering */
 }
 
+/* The SVG checkmark icon itself. */
 .check_icon {
   width: 36px;
   height: 36px;
-  color: white;
-  stroke-width: 3;
+  color: white; /* The `stroke` of the SVG will inherit this color. */
+  stroke-width: 3; /* Makes the checkmark line thicker. */
 }
 
 /* Text Styles */
 .success_title {
-  color: #1a365d;
+  color: #1a365d; 
   margin-bottom: 0.5rem;
   font-size: 1.5rem;
   font-weight: 600;
 }
 
 .success_subtitle {
-  color: #4a5568;
+  color: #4a5568; 
   margin-bottom: 2rem;
   font-size: 1rem;
 }
 
-/* Info Section */
+/* A light gray box that contains the Form ID and URL. */
 .info_section {
-  background: #f7fafc;
+  background: #f7fafc; 
   border: 1px solid #e2e8f0;
   border-radius: 6px;
   padding: 1.5rem;
   margin-bottom: 1.5rem;
-  text-align: left;
+  text-align: left; 
 }
 
 .info_item {
   margin-bottom: 1.25rem;
 }
 
+/* `:last-child` is a pseudo-class that selects the last element of its type among its siblings. */
 .info_item:last-child {
-  margin-bottom: 0;
+  margin-bottom: 0; /* Removes the bottom margin from the last item to avoid extra space. */
 }
 
 .info_label {
-  display: block;
-  font-size: 0.75rem;
+  display: block; /* Makes the label take its own line. */
+  font-size: 0.75rem; 
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: #718096;
+  text-transform: uppercase; 
+  letter-spacing: 0.5px; 
+  color: #718096; 
   margin-bottom: 0.5rem;
 }
 
+/* Styling for the `<code>` blocks. */
 .code_block {
   display: block;
   background: white;
   padding: 0.625rem 0.875rem;
   border-radius: 4px;
+  /* A "font stack" for monospaced fonts, commonly used for code.
+     The browser will try each font from left to right and use the first one it has installed. */
   font-family: "SF Mono", Monaco, "Courier New", monospace;
   font-size: 0.875rem;
   border: 1px solid #cbd5e0;
   color: #2d3748;
-  word-break: break-all;
+  word-break: break-all; /* forces string wrapping if overflow */
 }
 
 /* Button */
@@ -119,16 +137,14 @@
   transform: translateY(0);
 }
 
-/* Responsive Design */
+/* Responsive Design for smaller screens */
 @media (max-width: 768px) {
   .success_card {
-    padding: 2rem 1.5rem;
+    padding: 2rem 1.5rem; /* Reduce horizontal padding. */
   }
-
   .success_title {
-    font-size: 1.25rem;
+    font-size: 1.25rem; /* Reduce font size. */
   }
-
   .info_section {
     padding: 1.25rem;
   }

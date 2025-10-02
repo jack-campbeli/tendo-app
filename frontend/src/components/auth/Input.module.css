@@ -1,44 +1,52 @@
 /* Container for the entire input (label + field) */
 .input_container {
-  margin-bottom: 1.5rem;
-  width: 100%;
+  margin-bottom: 1.5rem; /* 1rem is typically 16px, so this is 24px. */
+  width: 100%; /*full width of parent*/
 }
 
 /* Styling for the label text */
 .input_label {
+  /* `display: block` makes the label take up its own line, pushing the input below it. */
   display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-  color: #2d3748;
-  font-size: 0.875rem;
+  margin-bottom: 0.5rem; 
+  font-weight: 600; /* Makes the font semi-bold. */
+  color: #2d3748; /* text color */
+  font-size: 0.875rem; 
 }
 
 /* Red asterisk for required fields */
 .required {
   color: #e53e3e;
-  margin-left: 4px;
+  margin-left: 4px; 
 }
 
 /* Styling for the input field itself */
 .input_field {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  font-size: 1rem;
-  border: 1px solid #cbd5e0;
-  border-radius: 6px;
+  width: 100%; 
+  padding: 0.75rem 1rem; /* 12px top/bottom, 16px left/right inside the input for text. */
+  font-size: 1rem; 
+  border: 1px solid #cbd5e0; /* A light gray border. */
+  border-radius: 6px; /* Rounds the corners of the input box. */
+  /* `transition` makes changes to properties (like border-color) animate smoothly. */
   transition: all 0.2s ease;
+  /* `box-sizing: border-box` is important! It tells the browser to include padding and border
+     in the element's total width and height, not add it on top. This makes layout math easier. */
   box-sizing: border-box;
   background-color: white;
 }
 
+/* on hover, border color changes */
 .input_field:hover {
   border-color: #a0aec0;
 }
 
-/* When user clicks/focuses on the input */
+/* on focus, border color changes */
 .input_field:focus {
+
+  /* remove default and add custom blue glow */
   outline: none;
-  border-color: #0066cc;
+  border-color: #0066cc; 
   background-color: white;
+  /* `box-shadow` adds a subtle glow around the input. */
   box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
 }

@@ -1,76 +1,91 @@
+/* General styling for standard input fields, textareas, and select dropdowns. */
 .form_input,
 .form_textarea,
 .form_select {
   width: 100%;
   padding: 12px 16px;
-  border: 2px solid #e9ecef;
+  border: 2px solid #e9ecef; /* A slightly thicker, subtle border. */
   border-radius: 6px;
   font-size: 1rem;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease; /* Animate multiple properties. */
+  box-sizing: border-box; /* Ensures padding doesn't add to the width. */
 }
 
+/* `:focus` styles are applied when the user clicks into any of these fields. */
 .form_input:focus,
 .form_textarea:focus,
 .form_select:focus {
-  outline: none;
-  border-color: #007bff;
+  outline: none; /* Remove the default browser outline. */
+  border-color: #007bff; /* Change border color to a highlight blue. */
+  /* Add a soft outer glow (box-shadow) to indicate focus. */
   box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
 }
 
 .form_textarea {
+  /* `resize: vertical` allows the user to resize the textarea, but only vertically.
+     This prevents them from accidentally breaking the page layout by making it too wide. */
   resize: vertical;
-  min-height: 100px;
+  min-height: 100px; /* Sets a minimum height. */
 }
 
+/* Flexbox containers for radio button and checkbox groups. */
 .radio_group,
 .checkbox_group {
   display: flex;
+  /* `flex-direction: column` stacks the options vertically. */
   flex-direction: column;
-  gap: 10px;
+  gap: 10px; /* Adds space between each option in the group. */
 }
 
+/* Styling for a single option (the input + its label). */
 .radio_option,
 .checkbox_option {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  align-items: center; /* Vertically aligns the input and the label text. */
+  gap: 8px; /* Space between the input and the label text. */
   padding: 8px 0;
 }
 
+/* Styling the actual radio button and checkbox inputs. */
 .radio_option input[type="radio"],
 .checkbox_option input[type="checkbox"] {
   width: 18px;
   height: 18px;
-  margin: 0;
+  margin: 0; /* Remove default margins. */
 }
 
+/* The label text for a radio or checkbox option. */
 .radio_option label,
 .checkbox_option label {
   margin: 0;
-  font-weight: normal;
+  font-weight: normal; /* Override any bolder styles from the main label. */
   cursor: pointer;
+  /* `flex: 1` makes the label take up the remaining space, ensuring the clickable
+     area extends all the way to the right edge. */
   flex: 1;
 }
 
+/* The main label for a form field (e.g., "First Name"). */
 .form_label {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 8px; /* Space between the label and the input below it. */
   font-weight: 600;
-  color: #333;
+  color: #333; /* A dark gray for good readability. */
   font-size: 1rem;
 }
 
+/* The red asterisk for required fields. */
 .required_asterisk {
   color: #dc3545;
   margin-left: 4px;
 }
 
-/* Responsive Design */
+/* Responsive Design for very small screens (e.g., small mobile phones). */
 @media (max-width: 480px) {
   .form_input,
   .form_textarea,
   .form_select {
+    /* Reduce the padding slightly on very small screens to save space. */
     padding: 10px 12px;
   }
 }

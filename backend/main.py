@@ -14,6 +14,7 @@ import uuid, json
 from models import (
     Form,
     FormSubmission,
+    User,
     LoginRequest,
     LoginResponse,
 )  # Our custom models
@@ -27,14 +28,60 @@ def get_session():
         yield session
 
 
+def _initialize_dummy_users():
+    """
+    Initialize dummy users in the database if they don't exist.
+    This function is called on application startup.
+    """
+    with Session(engine) as session:
+
+        # get all users
+        statement = select(User)
+        existing_users = session.exec(statement).all()
+
+        # if not users, create dummy users
+        if len(existing_users) == 0:
+
+            patient_user = User(
+                email="jack@gmail.com",
+                password="1111",  # In production, use hashed passwords
+                user_type="patient",
+                first_name="Jack",
+                last_name="Campbell",
+                recent_diagnosis="Type 2 Diabetes",
+                primary_care_physician="Dr. Sarah Johnson",
+            )
+
+            # Create dummy admin user
+            admin_user = User(
+                email="maggie@gmail.com",
+                password="1234",  # In production, use hashed passwords
+                user_type="admin",
+                first_name="Maggie",
+                last_name="Wong",
+                recent_diagnosis=None,  # Admins don't have patient-specific fields
+                primary_care_physician=None,
+            )
+
+            session.add(patient_user)
+            session.add(admin_user)
+            session.commit()
+            print("✓ Dummy users initialized in database")
+        else:
+            print(f"✓ Found {len(existing_users)} existing user(s) in database")
+
+
+# runs when the FASTAPI starts up
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Runs when FastAPI starts up - ensures database tables exist
+    # create tables and users if they don't exist
     SQLModel.metadata.create_all(engine)
+    _initialize_dummy_users()
     yield
-    # Cleanup code would go here (if needed)
+    # Cleanup: close the database connection
+    engine.dispose()
 
-
+# create the FASTAPI app (runs lifespan() above)
 app = FastAPI(lifespan=lifespan)
 
 
@@ -121,39 +168,72 @@ async def get_form(form_id: str, session: Session = Depends(get_session)):
     return {"form_name": db_form.form_name, "fields": json.loads(db_form.fields)}
 
 
-# Dummy users for authentication (no sign-up functionality)
-DUMMY_USERS = {
-    "jack@gmail.com": {"password": "1111", "user_type": "patient"},
-    "maggie@gmail.com": {"password": "1234", "user_type": "admin"},
-}
-
-
 # login endpoint
 @app.post("/api/auth/login", response_model=LoginResponse)
-async def login(credentials: LoginRequest):
+async def login(credentials: LoginRequest, session: Session = Depends(get_session)):
     """
     Authenticate user with email and password.
     Returns user type (patient or admin) on successful login.
+    Queries the database for user credentials.
     """
     email = credentials.email.lower().strip()
     password = credentials.password
 
-    # Check if user exists in our dummy users
-    if email not in DUMMY_USERS:
+    # Query database for user by email
+    statement = select(User).where(User.email == email)
+    user = session.exec(statement).first()
+
+    # Check if user exists
+    if not user:
         raise HTTPException(status_code=401, detail="Invalid email or password")
 
-    # Verify password
-    if DUMMY_USERS[email]["password"] != password:
+    # Verify password (in production, use hashed password comparison)
+    if user.password != password:
         raise HTTPException(status_code=401, detail="Invalid email or password")
 
     # Successful login
-    user_type = DUMMY_USERS[email]["user_type"]
     return LoginResponse(
         success=True,
-        user_type=user_type,
-        email=email,
-        message=f"Welcome back! Logged in as {user_type}.",
+        user_type=user.user_type,
+        email=user.email,
+        first_name=user.first_name,
+        last_name=user.last_name,
+        message=f"Welcome back, {user.first_name}! Logged in as {user.user_type}.",
     )
+
+
+# get user information by email
+@app.get("/api/users/{email}")
+async def get_user_info(email: str, session: Session = Depends(get_session)):
+    """
+    Retrieve user information by email.
+    Returns user details including patient-specific fields if applicable.
+    """
+    email = email.lower().strip()
+
+    # Query database for user by email
+    statement = select(User).where(User.email == email)
+    user = session.exec(statement).first()
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    # Build response with all user fields
+    user_data = {
+        "id": user.id,
+        "email": user.email,
+        "user_type": user.user_type,
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+        "created_at": user.created_at,
+    }
+
+    # Include patient-specific fields if user is a patient
+    if user.user_type == "patient":
+        user_data["recent_diagnosis"] = user.recent_diagnosis
+        user_data["primary_care_physician"] = user.primary_care_physician
+
+    return user_data
 
 
 # test endpoint
