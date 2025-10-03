@@ -7,6 +7,7 @@ from config.constants import SUPPORTED_LANGUAGES
 class TranslationService:
     """Handles form field translation using OpenAI API."""
 
+    # get api key and create client
     def __init__(self):
         api_key = self._load_api_key()
         if not api_key:
@@ -93,7 +94,7 @@ class TranslationService:
         if not translatable_items:
             return response_data
 
-        # Translate in batch
+        # Translate in batch [This should be generalized and combined with _translate_batch()]
         prompt = f"""Translate the following patient form responses from {source_lang_name} to English.
                     Maintain the JSON structure exactly. Only translate the text values, not the keys.
                     Keep medical terminology accurate and professional.
@@ -112,6 +113,7 @@ class TranslationService:
             temperature=0.3,
         )
 
+        # return first and only response's content
         translated_text = response.choices[0].message.content.strip()
 
         # Remove markdown code blocks if present

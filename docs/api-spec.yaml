@@ -1,0 +1,581 @@
+openapi: 3.0.3
+info:
+  title: Tendo Form Management API
+  description: |
+    A comprehensive API for managing medical forms, submissions, and user authentication with built-in multi-language translation support.
+
+    ## Features
+    - Form creation and management
+    - Multi-language form translation (cached for performance)
+    - Form submission handling
+    - User authentication (Patient/Admin roles)
+    - User profile management
+
+    ## Base URL
+    Development: `http://localhost:8000`
+  version: 1.0.0
+  contact:
+    name: Tendo Development Team
+
+servers:
+  - url: http://localhost:8000
+    description: Development server
+
+tags:
+  - name: Forms
+    description: Form creation and retrieval operations
+  - name: Submissions
+    description: Form submission management
+  - name: Authentication
+    description: User authentication and authorization
+  - name: Users
+    description: User profile management
+  - name: Health
+    description: API health and testing
+
+paths:
+  /api/forms:
+    post:
+      tags:
+        - Forms
+      summary: Create a new form
+      description: |
+        Creates a new form and automatically pre-caches translations for configured languages.
+        Pre-cached languages are defined in the application configuration.
+      operationId: createForm
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - form_name
+                - fields
+              properties:
+                form_name:
+                  type: string
+                  description: The name/title of the form
+                  example: "Patient Intake Form"
+                fields:
+                  type: array
+                  description: Array of form field definitions
+                  items:
+                    $ref: "#/components/schemas/FormField"
+            example:
+              form_name: "Patient Intake Form"
+              fields:
+                - id: "field_1"
+                  label: "Full Name"
+                  type: "text"
+                  required: true
+                  placeholder: "Enter your full name"
+                - id: "field_2"
+                  label: "Date of Birth"
+                  type: "date"
+                  required: true
+      responses:
+        "200":
+          description: Form created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  form_id:
+                    type: string
+                    format: uuid
+                    description: Unique identifier for the created form
+                    example: "123e4567-e89b-12d3-a456-426614174000"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+    get:
+      tags:
+        - Forms
+      summary: Get all forms (Debug)
+      description: |
+        Returns all forms in the database. Primarily used for debugging and development.
+        In production, consider adding pagination and filtering.
+      operationId: getAllForms
+      responses:
+        "200":
+          description: List of all forms
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      format: uuid
+                      example: "123e4567-e89b-12d3-a456-426614174000"
+                    form_name:
+                      type: string
+                      example: "Patient Intake Form"
+                    fields:
+                      type: string
+                      description: JSON string of form fields
+                      example: '[{"id":"field_1","label":"Full Name","type":"text"}]'
+                    created_at:
+                      type: string
+                      format: date-time
+                      example: "2025-10-03T12:00:00Z"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/forms/latest:
+    get:
+      tags:
+        - Forms
+      summary: Get the most recent form
+      description: |
+        Retrieves the most recently created form. Supports multi-language translation
+        through the `lang` query parameter. Translations are cached for improved performance.
+      operationId: getLatestForm
+      parameters:
+        - name: lang
+          in: query
+          description: |
+            Language code for translation (ISO 639-1).
+            Defaults to English ('en').
+          required: false
+          schema:
+            type: string
+            default: "en"
+            example: "es"
+            enum: [en, es, fr, de, it, pt, zh, ja, ko, ar]
+      responses:
+        "200":
+          description: Successfully retrieved the latest form
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FormResponse"
+        "404":
+          description: No forms found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "No forms found"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/forms/{form_id}:
+    get:
+      tags:
+        - Forms
+      summary: Get a specific form by ID
+      description: Retrieves a single form using its unique identifier
+      operationId: getFormById
+      parameters:
+        - name: form_id
+          in: path
+          description: Unique form identifier (UUID)
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: "123e4567-e89b-12d3-a456-426614174000"
+      responses:
+        "200":
+          description: Form retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  form_name:
+                    type: string
+                    example: "Patient Intake Form"
+                  fields:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/FormField"
+        "404":
+          description: Form not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "Form not found"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/submissions:
+    post:
+      tags:
+        - Submissions
+      summary: Submit a completed form
+      description: |
+        Saves a form submission. If the submission is in a non-English language,
+        responses are automatically translated to English before storage.
+      operationId: createSubmission
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - form_id
+                - submission_data
+              properties:
+                form_id:
+                  type: string
+                  format: uuid
+                  description: ID of the form being submitted
+                  example: "123e4567-e89b-12d3-a456-426614174000"
+                submission_data:
+                  type: object
+                  description: Key-value pairs of field IDs and user responses
+                  additionalProperties:
+                    type: string
+                  example:
+                    field_1: "John Doe"
+                    field_2: "1990-05-15"
+                    field_3: "john.doe@email.com"
+                language:
+                  type: string
+                  description: Language code of the submission (ISO 639-1)
+                  default: "en"
+                  example: "en"
+      responses:
+        "200":
+          description: Submission saved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+    get:
+      tags:
+        - Submissions
+      summary: Get all form submissions
+      description: |
+        Retrieves all form submissions ordered by submission date (most recent first).
+        Returns submissions with English translations.
+      operationId: getAllSubmissions
+      responses:
+        "200":
+          description: List of all submissions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SubmissionResponse"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: User login
+      description: |
+        Authenticates a user with email and password.
+        Returns user information including role (patient or admin) on successful authentication.
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "Invalid email or password"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/users/{email}:
+    get:
+      tags:
+        - Users
+      summary: Get user information by email
+      description: |
+        Retrieves detailed user information by email address.
+        For patient users, includes medical information fields.
+      operationId: getUserByEmail
+      parameters:
+        - name: email
+          in: path
+          description: User's email address
+          required: true
+          schema:
+            type: string
+            format: email
+            example: "jack@gmail.com"
+      responses:
+        "200":
+          description: User information retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "User not found"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /api/test:
+    get:
+      tags:
+        - Health
+      summary: API health check
+      description: Simple endpoint to verify that the API is running and responding
+      operationId: healthCheck
+      responses:
+        "200":
+          description: API is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "FastAPI is working!"
+
+components:
+  schemas:
+    FormField:
+      type: object
+      description: Defines a single field in a form
+      required:
+        - id
+        - label
+        - type
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the field
+          example: "field_1"
+        label:
+          type: string
+          description: Display label for the field
+          example: "Full Name"
+        type:
+          type: string
+          description: Input type of the field
+          enum:
+            [text, email, tel, date, number, textarea, select, checkbox, radio]
+          example: "text"
+        required:
+          type: boolean
+          description: Whether the field is mandatory
+          default: false
+          example: true
+        placeholder:
+          type: string
+          description: Placeholder text for the input
+          example: "Enter your full name"
+        options:
+          type: array
+          description: Available options (for select, radio, checkbox fields)
+          items:
+            type: string
+          example: ["Option 1", "Option 2", "Option 3"]
+
+    FormResponse:
+      type: object
+      description: Complete form with all fields
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique form identifier
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        form_name:
+          type: string
+          description: Name/title of the form
+          example: "Patient Intake Form"
+        fields:
+          type: array
+          description: Array of form fields
+          items:
+            $ref: "#/components/schemas/FormField"
+
+    SubmissionResponse:
+      type: object
+      description: A form submission with metadata
+      properties:
+        id:
+          type: integer
+          description: Unique submission identifier
+          example: 1
+        form_id:
+          type: string
+          format: uuid
+          description: ID of the submitted form
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        submission_data:
+          type: object
+          description: Field IDs mapped to user responses
+          additionalProperties:
+            type: string
+          example:
+            field_1: "John Doe"
+            field_2: "1990-05-15"
+            field_3: "john.doe@email.com"
+        submitted_at:
+          type: string
+          format: date-time
+          description: Timestamp of submission
+          example: "2025-10-03T14:30:00Z"
+
+    LoginRequest:
+      type: object
+      description: User login credentials
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          description: User's email address
+          example: "jack@gmail.com"
+        password:
+          type: string
+          format: password
+          description: User's password
+          example: "1111"
+
+    LoginResponse:
+      type: object
+      description: Successful login response
+      properties:
+        success:
+          type: boolean
+          description: Login success status
+          example: true
+        user_type:
+          type: string
+          description: User's role
+          enum: [patient, admin]
+          example: "patient"
+        email:
+          type: string
+          format: email
+          description: User's email address
+          example: "jack@gmail.com"
+        first_name:
+          type: string
+          description: User's first name
+          example: "Jack"
+        last_name:
+          type: string
+          description: User's last name
+          example: "Campbell"
+        message:
+          type: string
+          description: Welcome message
+          example: "Welcome back, Jack! Logged in as patient."
+
+    UserResponse:
+      type: object
+      description: User profile information
+      properties:
+        id:
+          type: integer
+          description: Unique user identifier
+          example: 1
+        email:
+          type: string
+          format: email
+          description: User's email address
+          example: "jack@gmail.com"
+        user_type:
+          type: string
+          description: User's role
+          enum: [patient, admin]
+          example: "patient"
+        first_name:
+          type: string
+          description: User's first name
+          example: "Jack"
+        last_name:
+          type: string
+          description: User's last name
+          example: "Campbell"
+        created_at:
+          type: string
+          format: date-time
+          description: Account creation timestamp
+          example: "2025-09-01T10:00:00Z"
+        recent_diagnosis:
+          type: string
+          nullable: true
+          description: Patient's recent diagnosis (patient users only)
+          example: "Type 2 Diabetes"
+        primary_care_physician:
+          type: string
+          nullable: true
+          description: Patient's primary care physician (patient users only)
+          example: "Dr. Sarah Johnson"
+
+  responses:
+    BadRequest:
+      description: Invalid request parameters or body
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              detail:
+                type: string
+                example: "Invalid request format"
+
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              detail:
+                type: string
+                example: "An unexpected error occurred"
