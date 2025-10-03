@@ -25,6 +25,8 @@ function Header({ title, showLanguageSelector = true }) {
   return (
     <header className={styles.header}>
       <div className={styles.header_content}>
+        
+        {/* Language selector dropdown */}
         {showLanguageSelector && (
           <select 
             value={language}

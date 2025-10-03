@@ -12,14 +12,6 @@ function FieldEditor({
     <div className="form-section">
       <h3 className="section-title">2. Add Fields</h3>
 
-      {/* 
-      
-      !! REVIEW THIS !!
-      
-      This `div` uses a CSS Grid layout (defined in the CSS module) to place the
-          label and type inputs side-by-side on larger screens. 
-      
-      */}
       <div className={styles.field_grid}>
         {/* Field Label Input */}
         <div>

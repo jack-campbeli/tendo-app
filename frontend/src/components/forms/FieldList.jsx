@@ -21,12 +21,11 @@ function FieldList({
 
       {/* iterate over fields and render a div for each */}
       {fields.map((field, index) => (
-        
-        // !!! REVIEW WHY KEY PRO IS IMPORTANT: !!!
-        // key prop is essential for lists in React. It must be a unique string or number.
+        // pass key prop to ensure field specific re-rendering
         <div key={field.id} className={styles.field_item}>
           <div className={styles.field_info}>
             <strong className={styles.field_label}>{field.label}</strong>
+            
             {/* REVIEW OPTIONAL CHAINING: im confused */}
             <span className={styles.field_type}>
               {fieldTypes.find(t => t.value === field.type)?.label || field.type}
